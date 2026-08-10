@@ -1,0 +1,44 @@
+/* app/globals.css */@tailwind base;@tailwind components;@tailwind utilities;@layer base {
+
+:root {
+
+--background: 222.2 84% 4.9%;
+
+--foreground: 210 40% 98%;
+
+}
+
+
+
+body {
+
+background-color: #020617; /* Slate 950 */
+
+color: #f8fafc; /* Slate 50 */
+
+font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+
+min-height: 100vh;
+
+margin: 0;
+
+padding: 0;
+
+}
+
+}/* Custom Scrollbar Styling */
+
+::-webkit-scrollbar {
+
+width: 8px;
+
+height: 8px;
+
+}
+
+::-webkit-scrollbar-track { background: #020617; }
+
+::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+
+::-webkit-scrollbar-thumb:hover { background: #334155; } 
+
