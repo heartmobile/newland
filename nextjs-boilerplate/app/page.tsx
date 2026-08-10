@@ -1,109 +1,133 @@
-import React from 'react';
 import Link from 'next/link';
-import { Smartphone, Wrench, ShieldCheck, ArrowRight, Truck, CheckCircle2 } from 'lucide-react';
+import { getDisplayPrice, getProductsByCategory } from '@/lib/products';
 
 export default function HomePage() {
+  const featuredDevices = getProductsByCategory('device').slice(0, 3);
+  const featuredScreens = getProductsByCategory('screen').slice(0, 2);
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between">
-      
-      {/* Hero Section */}
-      <div className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8 border-b border-slate-800/80">
-        <div className="max-w-5xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
-            <CheckCircle2 className="w-3.5 h-3.5" /> Premium OEM Parts & Devices
+    <>
+      <section className="hero">
+        <div className="shell hero-grid">
+          <div>
+            <span className="eyebrow">Your tech. Our heart.</span>
+            <h1>Reliable mobile tech, priced for real life.</h1>
+            <p className="hero-copy">
+              Shop refurbished Apple and Samsung devices or find a quality replacement screen
+              with clear grading, warranty information, and Canadian support.
+            </p>
+            <div className="actions">
+              <Link href="/phones" className="button">Shop devices</Link>
+              <Link href="/parts" className="button button-secondary">Browse screens</Link>
+            </div>
           </div>
-          
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
-            Your Trusted Source for <br className="hidden sm:inline" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
-              Mobile Devices & Repairs
-            </span>
-          </h1>
+          <div className="hero-card" aria-label="Heart Mobile shopping benefits">
+            <span className="phone-shape phone-one" />
+            <span className="phone-shape phone-two" />
+            <div className="hero-card-copy">
+              <small>Apple + Samsung</small>
+              <strong>More choice.<br />Better value.</strong>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto">
-            Explore certified smartphones, high-grade replacement screens, batteries, and repair modules backed by our standard 1-year warranty.
+      <section className="trust-strip">
+        <div className="shell trust-grid">
+          <div><strong>Warranty protection</strong><span>Coverage shown clearly before purchase</span></div>
+          <div><strong>Free delivery $150+</strong><span>On eligible Canadian orders</span></div>
+          <div><strong>Secure checkout</strong><span>Payments processed by Stripe</span></div>
+        </div>
+      </section>
+
+      <section className="section shell">
+        <div className="section-heading">
+          <span className="eyebrow">Shop your way</span>
+          <h2>Start with what you need</h2>
+        </div>
+        <div className="category-grid">
+          <Link href="/phones" className="category-card sage-card">
+            <span>Refurbished devices</span>
+            <h3>iPhone and Samsung Galaxy</h3>
+            <p>Compare storage, grade, carrier compatibility, and live availability.</p>
+            <strong>Browse devices →</strong>
+          </Link>
+          <Link href="/parts" className="category-card light-card">
+            <span>Replacement screens</span>
+            <h3>Displays for popular models</h3>
+            <p>Compare aftermarket, assembled, refurbished, and genuine OEM options.</p>
+            <strong>Browse screens →</strong>
+          </Link>
+        </div>
+      </section>
+
+      <section className="featured-section">
+        <div className="shell">
+          <div className="featured-heading">
+            <div>
+              <span className="eyebrow">Featured preview</span>
+              <h2>Popular devices</h2>
+            </div>
+            <Link href="/phones">View device catalog →</Link>
+          </div>
+          <div className="product-grid">
+            {featuredDevices.map((product) => (
+              <article className="product-card" key={product.id}>
+                <div className="product-visual"><span className="device-icon" /></div>
+                <div className="product-meta">
+                  <span>{product.brand}</span>
+                  <span>Grade {product.condition}</span>
+                </div>
+                <h3>{product.name}</h3>
+                <p>{product.storage} · Unlocked preview</p>
+                <div className="stock-row">
+                  <strong>CA${getDisplayPrice(product).toFixed(2)}</strong>
+                  <span>{product.stockQuantity} available</span>
+                </div>
+              </article>
+            ))}
+          </div>
+          <p className="preview-disclaimer">
+            Preview inventory and estimated pricing. Live supplier quantities will replace these
+            samples when the MobileSentrix API is connected.
           </p>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <Link
-              href="/parts"
-              className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg"
-            >
-              <Wrench className="w-4 h-4" /> Shop Parts
-            </Link>
-            <Link
-              href="/phones"
-              className="w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-medium text-sm rounded-xl transition-all flex items-center justify-center gap-2"
-            >
-              <Smartphone className="w-4 h-4" /> Browse Devices
-            </Link>
-          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Highlights / Features Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 space-y-3">
-            <div className="p-3 bg-blue-500/10 text-blue-400 w-fit rounded-xl">
-              <Wrench className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white">Precision Components</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Every display, digitizer, and battery undergoes strict quality control testing before reaching your hands.
+      <section className="section shell screen-showcase">
+        <div className="section-heading">
+          <span className="eyebrow">Repair your phone</span>
+          <h2>Choose the screen quality that fits.</h2>
+          <p>Every listing will explain its quality tier, compatibility, and warranty coverage.</p>
+        </div>
+        <div className="screen-list">
+          {featuredScreens.map((product) => (
+            <Link href="/parts" className="screen-row" key={product.id}>
+              <span className="mini-screen" aria-hidden="true" />
+              <span>
+                <small>{product.brand} · {product.qualityTier}</small>
+                <strong>{product.name}</strong>
+                <em>Compatible with {product.compatibility}</em>
+              </span>
+              <b>CA${getDisplayPrice(product).toFixed(2)}</b>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="repair-banner">
+        <div className="shell repair-content">
+          <div>
+            <span className="eyebrow">Need installation?</span>
+            <h2>Connect with a local repair professional.</h2>
+            <p>
+              Our repair-partner directory is coming soon, with participating screen
+              installations from $40.
             </p>
           </div>
-
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 space-y-3">
-            <div className="p-3 bg-green-500/10 text-green-400 w-fit rounded-xl">
-              <Truck className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white">Fast Dispatch</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Orders placed before cutoff times ship out the same day with tracked, expedited options.
-            </p>
-          </div>
-
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 space-y-3">
-            <div className="p-3 bg-purple-500/10 text-purple-400 w-fit rounded-xl">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white">1-Year Warranty</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Shop with complete confidence knowing every order is protected under our comprehensive defect policy.
-            </p>
-          </div>
-
+          <Link href="/parts" className="button button-dark">Choose your screen</Link>
         </div>
-      </div>
-
-      {/* Bottom CTA Banner */}
-      <div className="border-t border-slate-800/80 bg-slate-900/30 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center space-y-4">
-          <h2 className="text-2xl font-bold text-white">Need support or policy information?</h2>
-          <p className="text-xs text-slate-400">
-            Check out our detailed warranty guidelines or reach out to our team directly.
-          </p>
-          <div className="pt-2 flex justify-center gap-4">
-            <Link
-              href="/warranty"
-              className="inline-flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 font-medium"
-            >
-              Warranty Terms <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-            <span className="text-slate-700">•</span>
-            <Link
-              href="/terms"
-              className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-300 font-medium"
-            >
-              Terms & Conditions <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        </div>
-      </div>
-
-    </div>
+      </section>
+    </>
   );
 }
