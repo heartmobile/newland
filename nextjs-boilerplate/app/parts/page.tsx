@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getDisplayPrice, getProductsByCategory } from '@/lib/products';
 
 export default function PartsPage() {
@@ -33,6 +34,9 @@ export default function PartsPage() {
                 <strong>CA${getDisplayPrice(product).toFixed(2)}</strong>
                 <span>{product.stockQuantity} available</span>
               </div>
+              <Link className="card-action" href={`/products/${product.id}`}>
+                View screen details →
+              </Link>
             </article>
           ))}
         </div>
