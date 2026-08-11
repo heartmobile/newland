@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Image from 'next/image';
 import Link from 'next/link';
 import './globals.css';
 
@@ -52,7 +53,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </div>
           </div>
           <div className="shell copyright">
-            © {new Date().getFullYear()} Heart Mobile. All rights reserved.
+            <span>© {new Date().getFullYear()} Heart Mobile. All rights reserved.</span>
+            <div className="payment-methods">
+              <span>Payment options available when checkout launches</span>
+              <Image
+                src="/payment-methods.png"
+                width={393}
+                height={39}
+                alt="Visa, Mastercard, PayPal, Apple Pay, American Express, Discover, and Interac"
+              />
+            </div>
           </div>
         </footer>
       </body>

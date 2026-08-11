@@ -21,12 +21,14 @@ export default function HomePage() {
               <Link href="/parts" className="button button-secondary">Browse screens</Link>
             </div>
           </div>
-          <div className="hero-card" aria-label="Heart Mobile shopping benefits">
-            <span className="phone-shape phone-one" />
-            <span className="phone-shape phone-two" />
+          <div
+            className="hero-card hero-artwork"
+            role="img"
+            aria-label="Heart Mobile iPhone and Samsung promotion on a glowing river table"
+          >
             <div className="hero-card-copy">
-              <small>Apple + Samsung</small>
-              <strong>More choice.<br />Better value.</strong>
+              <small>Flagship Apple + Samsung</small>
+              <strong>Stand out with<br />better value.</strong>
             </div>
           </div>
         </div>
@@ -36,7 +38,7 @@ export default function HomePage() {
         <div className="shell trust-grid">
           <div><strong>Warranty protection</strong><span>Coverage shown clearly before purchase</span></div>
           <div><strong>Free delivery $150+</strong><span>On eligible Canadian orders</span></div>
-          <div><strong>Secure checkout</strong><span>Payments processed by Stripe</span></div>
+          <div><strong>Clear condition grades</strong><span>Know what to expect before ordering</span></div>
         </div>
       </section>
 
@@ -72,7 +74,11 @@ export default function HomePage() {
           </div>
           <div className="product-grid">
             {featuredDevices.map((product) => (
-              <article className="product-card" key={product.id}>
+              <Link
+                href={`/products/${product.id}`}
+                className="product-card product-card-link"
+                key={product.id}
+              >
                 <div className="product-visual"><span className="device-icon" /></div>
                 <div className="product-meta">
                   <span>{product.brand}</span>
@@ -84,7 +90,8 @@ export default function HomePage() {
                   <strong>CA${getDisplayPrice(product).toFixed(2)}</strong>
                   <span>{product.stockQuantity} available</span>
                 </div>
-              </article>
+                <span className="card-action">View device details →</span>
+              </Link>
             ))}
           </div>
           <p className="preview-disclaimer">
@@ -95,23 +102,68 @@ export default function HomePage() {
       </section>
 
       <section className="section shell screen-showcase">
-        <div className="section-heading">
-          <span className="eyebrow">Repair your phone</span>
-          <h2>Choose the screen quality that fits.</h2>
-          <p>Every listing will explain its quality tier, compatibility, and warranty coverage.</p>
+        <div className="screen-showcase-grid">
+          <Link
+            href="/parts"
+            className="screen-promo-artwork"
+            aria-label="Browse Heart Mobile iPhone and Android replacement screens"
+          >
+            <span>Explore replacement screens</span>
+          </Link>
+          <div>
+            <div className="section-heading">
+              <span className="eyebrow">Repair your phone</span>
+              <h2>Choose the screen quality that fits.</h2>
+              <p>Every listing will explain its quality tier, compatibility, and warranty coverage.</p>
+            </div>
+            <div className="screen-list">
+              {featuredScreens.map((product) => (
+                <Link href="/parts" className="screen-row" key={product.id}>
+                  <span className="mini-screen" aria-hidden="true" />
+                  <span>
+                    <small>{product.brand} · {product.qualityTier}</small>
+                    <strong>{product.name}</strong>
+                    <em>Compatible with {product.compatibility}</em>
+                  </span>
+                  <b>CA${getDisplayPrice(product).toFixed(2)}</b>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="screen-list">
-          {featuredScreens.map((product) => (
-            <Link href="/parts" className="screen-row" key={product.id}>
-              <span className="mini-screen" aria-hidden="true" />
-              <span>
-                <small>{product.brand} · {product.qualityTier}</small>
-                <strong>{product.name}</strong>
-                <em>Compatible with {product.compatibility}</em>
-              </span>
-              <b>CA${getDisplayPrice(product).toFixed(2)}</b>
-            </Link>
-          ))}
+      </section>
+
+      <section className="shopping-guide">
+        <div className="shell">
+          <div className="section-heading guide-heading">
+            <span className="eyebrow">Shop with clarity</span>
+            <h2>Know what you&apos;re getting.</h2>
+            <p>
+              Straightforward product details and support help you choose confidently from
+              catalog to delivery.
+            </p>
+          </div>
+          <div className="guide-grid">
+            <article>
+              <span className="guide-number">01</span>
+              <h3>Compare the details</h3>
+              <p>Review condition, storage, compatibility, quality tier, and estimated pricing.</p>
+            </article>
+            <article>
+              <span className="guide-number">02</span>
+              <h3>Confirm live availability</h3>
+              <p>Inventory will be rechecked with the supplier before an order is accepted.</p>
+            </article>
+            <article>
+              <span className="guide-number">03</span>
+              <h3>Get covered delivery</h3>
+              <p>See warranty terms up front and receive tracking when your order ships.</p>
+            </article>
+          </div>
+          <div className="guide-links">
+            <Link href="/warranty">Read warranty details →</Link>
+            <Link href="/delivery">See delivery information →</Link>
+          </div>
         </div>
       </section>
 
