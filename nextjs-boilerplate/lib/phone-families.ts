@@ -130,7 +130,7 @@ export const FEATURED_PHONE_FAMILIES: PhoneFamilyProfile[] = [
       },
       {
         name: 'Galaxy S25+',
-        image: '/phones/galaxy-s25-plus.png',
+        image: '/phones/galaxy-s25-plus.jpg',
         screenSize: '6.7"',
         display: 'QHD+ Dynamic AMOLED 2X, adaptive 120Hz',
         camera: '50 MP main camera with 3x optical zoom',
