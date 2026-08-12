@@ -1,5 +1,7 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { getDisplayPrice, getProductsByCategory } from '@/lib/products';
+import { FEATURED_PHONE_FAMILIES } from '@/lib/phone-families';
 
 export default function HomePage() {
   const featuredDevices = getProductsByCategory('device').slice(0, 3);
@@ -60,6 +62,28 @@ export default function HomePage() {
             <p>Compare aftermarket, assembled, refurbished, and genuine OEM options.</p>
             <strong>Browse screens →</strong>
           </Link>
+        </div>
+      </section>
+
+      <section className="section shell">
+        <div className="featured-heading">
+          <div>
+            <span className="eyebrow">Shop by generation</span>
+            <h2>Find your Galaxy S.</h2>
+          </div>
+          <Link href="/phones">View all devices →</Link>
+        </div>
+        <div className="home-model-grid">
+          {FEATURED_PHONE_FAMILIES.map((family) => (
+            <Link href={`/phones/${family.slug}`} className="home-model-card" key={family.slug}>
+              <Image src={family.heroImage} alt="" width={520} height={520} />
+              <div>
+                <small>{family.year} · Samsung</small>
+                <h3>{family.name}</h3>
+                <span>Standard · Plus · Ultra</span>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
