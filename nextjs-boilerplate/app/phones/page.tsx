@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   DEVICE_FAMILIES,
   DEVICE_GRADE_GUIDE,
   getDisplayPrice,
   getProductsByCategory,
 } from '@/lib/products';
+import { FEATURED_PHONE_FAMILIES } from '@/lib/phone-families';
 
 export const metadata: Metadata = {
   title: 'Refurbished Devices',
@@ -27,6 +29,30 @@ export default function PhonesPage() {
         <div className="catalog-note">
           Preview data only — purchasing opens after live supplier stock and checkout are connected.
         </div>
+
+        <section className="featured-families" aria-labelledby="featured-families-title">
+          <div className="featured-heading">
+            <div>
+              <span className="eyebrow">Shop Galaxy S</span>
+              <h2 id="featured-families-title">Compare recent generations</h2>
+            </div>
+          </div>
+          <div className="family-card-grid">
+            {FEATURED_PHONE_FAMILIES.map((family) => (
+              <Link href={`/phones/${family.slug}`} className="family-card" key={family.slug}>
+                <div className="family-card-image">
+                  <Image src={family.heroImage} alt="" width={500} height={500} />
+                </div>
+                <div>
+                  <span>{family.brand} · {family.year}</span>
+                  <h3>{family.name} series</h3>
+                  <p>{family.eyebrow}</p>
+                  <strong>Compare models →</strong>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
 
         <nav className="family-nav" aria-label="Device families">
           <span>Jump to a family</span>
