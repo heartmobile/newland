@@ -18,3 +18,20 @@
     <header><a class="home" href="/">← Home</a><h1>Warrany and Returns</h1></header>
 
     <main class="content">
+Warrenty  Program
+
+• Limited 90 day warrenty on all devices (limited means that the device , part of the device must have failed for "natural reasons" (not because it was dropped or mishandled)
+• Limited Life Time warrenty on all Replacement parts (excluding batteries). (Again, thepart must have failed due to natural reasons. Not because of impropper installation or mishandling).
+
+Returns
+
+• Products are returnable for 30 day from the purchase date.
+    </main>
+
+    <footer>
+      <p><a href="/terms.html">Terms &amp; Conditions</a> — <a href="/privacy.html">Privacy Policy</a> — <a href="/warranty-returns.html">Warranty &amp; Returns</a></p>
+    </footer>
+  </div>
+</body>
+</html>
+
