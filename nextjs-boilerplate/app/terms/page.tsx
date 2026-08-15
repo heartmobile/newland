@@ -1,3 +1,4 @@
+<!-- Place in your footer partial/template to link the Terms page -->
 <footer>
   <nav aria-label="legal">
     <a href="/terms.html">Terms &amp; Conditions</a> | <a href="/privacy.html">Privacy Policy</a>
