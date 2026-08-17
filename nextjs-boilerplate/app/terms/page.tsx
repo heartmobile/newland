@@ -1,21 +1,3 @@
-<footer>
-  <nav aria-label="legal">
-    <a href="/terms.html">Terms &amp; Conditions</a> | <a href="/privacy.html">Privacy Policy</a>
-  </nav>
-  <p style="font-size:0.9rem;color:#666">&copy; Heart Mobile</p>
-</footer>
-
-2) Footer snippet — paste this into your site footer template (HTML partial)
-
-<!-- Place in your footer partial/template to link the Terms page -->
-<footer>
-  <nav aria-label="legal">
-    <a href="/terms.html">Terms &amp; Conditions</a> | <a href="/privacy.html">Privacy Policy</a>
-  </nav>
-  <p style="font-size:0.9rem;color:#666">&copy; Heart Mobile</p>
-</footer>
-3) Minimal React component (if your nested site uses React) — put in src/components/Terms.jsx (or .tsx)
-
 import React from "react";
 
 export default function Terms() {
@@ -32,7 +14,7 @@ export default function Terms() {
         </ul>
       </section>
 
-      <div style={{whiteSpace:"pre-wrap", marginTop:12}}>
+      <div style={{whiteSpace:"pre-wrap
 {`PLEASE READ THIS AGREEMENT CAREFULLY AS IT GOVERNS YOUR USE OF HEART MOBILES WEBSITE. IT EXEMPTS HEART MOBILES AND OTHER PERSONS FROM LIABILITY OR LIMITS THEIR LIABILITY, AND CONTAINS OTHER IMPORTANT PROVISIONS THAT YOU SHOULD READ.
 Your Acceptance of This Agree
 This is an Agreement between you and all persons you represent (and for purposes of this Agreement, "person" includes natural persons and any type of incorporated or unincorporated entity) and Heart Mobile. (“ 101123964 Ontario LTD.") regarding your access to and use of Heart Mobile's website and all content, information, products and services available on or through the website (collectively, the "Website"). This Agreement also provides benefits to Heart Mobiles 's service providers, suppliers and other persons.
