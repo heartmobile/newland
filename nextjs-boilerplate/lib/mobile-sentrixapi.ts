@@ -1,4 +1,4 @@
-// lib/sentrixApi.ts
+// lib/mobile-sentrixapi.ts
 import { generateOAuthHeader } from './authSigner';
 
 // ============================================================================
@@ -145,6 +145,19 @@ export class SentrixApiService {
       `&consumer_key=${encodeURIComponent(this.creds.consumerKey)}` +
       `&consumer_secret=${encodeURIComponent(this.creds.consumerSecret)}` +
       `&callback=${encodeURIComponent(callback)}&customer_email=${encodeURIComponent(token)}`;
+  }
+
+  /**
+   * Builds the browser redirection URL to disconnect sessions and revoke credentials.
+   */
+  buildOAuthDisconnectUrl(consumerName: string, callbackUrl: string): string {
+    return `${this.baseUrl}/oauth/authorize/identifier?` +
+      `consumer=${encodeURIComponent(consumerName)}` +
+      `&authtype=1&flowentry=SignIn` +
+      `&consumer_key=${encodeURIComponent(this.creds.consumerKey)}` +
+      `&consumer_secret=${encodeURIComponent(this.creds.consumerSecret)}` +
+      `&session_revoke=1` + 
+      `&callback=${encodeURIComponent(callbackUrl)}`;
   }
 
   // --- Account Notes Logging Engine ---
