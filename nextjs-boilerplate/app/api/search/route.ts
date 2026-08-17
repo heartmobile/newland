@@ -90,6 +90,7 @@ export async function GET(request: NextRequest) {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        // Pass validation security credentials cleanly on every request cycle
         'X-Consumer-Key': CONSUMER_KEY,
         'X-Consumer-Secret': CONSUMER_SECRET,
         'X-Access-Token': ACCESS_TOKEN,
