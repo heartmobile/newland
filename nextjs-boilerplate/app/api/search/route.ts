@@ -1,65 +1,55 @@
 // app/api/search/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
-// This is your raw MobileSentrix product shape mock data dictionary
-const mobileSentrixProducts: Record<string, any> = {
-  "73": {
-    "entity_id": "73",
-    "sku": "107082005005",
-    "name": "LCD Compatible For iPad 2 (Premium) asdwqeqsad",
-    "price": "33.4000",
-    "manufacturer_text": "Apple",
-    "model_text": "iPad 2",
-    "default_image": "https://mobilesentrix.com"
-  },
-  "74": {
-    "entity_id": "74",
-    "sku": "107082005039",
-    "name": "Replacement battery Compatible For iPad 2 (Premium)",
-    "price": "12.1900",
-    "manufacturer_text": "Apple",
-    "model_text": "iPad 2",
-    "default_image": "https://mobilesentrix.com"
-  }
-};
+// 1. Core integration environment variables
+const BASE_URL = process.env.MOBILESENTRIX_BASE_URL || 'https://mobilesentrix.com';
+const CONSUMER_KEY = process.env.MOBILESENTRIX_CONSUMER_KEY || '';
+const CONSUMER_SECRET = process.env.MOBILESENTRIX_CONSUMER_SECRET || '';
+const ACCESS_TOKEN = process.env.MOBILESENTRIX_ACCESS_TOKEN || '';
+const ACCESS_TOKEN_SECRET = process.env.MOBILESENTRIX_ACCESS_TOKEN_SECRET || '';
 
 /**
- * STRATEGY MAPPING LAYER:
- * Converts raw product meta-strings into exact, authoritative Wikipedia Article Titles.
+ * DYNAMIC CLEANING ENGINE:
+ * Automatically formats variations into exact Wikipedia page titles on the fly.
+ * No hardcoded device lists needed.
  */
 function mapProductToWikipediaTitle(brand: string, model: string): string {
-  const cleanBrand = (brand || '').toLowerCase().trim();
-  const cleanModel = (model || '').toLowerCase().trim();
+  if (model && model.trim().length > 0) {
+    const cleanModel = model.trim();
+    
+    // Automatically catches all iPads and appends correct grammatical generation suffixes
+    if (/^ipad\s+\d+$/i.test(cleanModel)) {
+      const match = cleanModel.match(/\d+/);
+      const digit = match ? match[0] : '';
+      
+      let suffix = 'th';
+      if (digit === '1') suffix = 'st';
+      if (digit === '2') suffix = 'nd';
+      if (digit === '3') suffix = 'rd';
 
-  // Rule 1: Specific Apple generational remapping
-  if (cleanBrand === 'apple' || cleanModel.includes('ipad') || cleanModel.includes('iphone')) {
-    if (cleanModel === 'ipad 2') return 'iPad (2nd generation)';
-    if (cleanModel === 'ipad 3') return 'iPad (3rd generation)';
-    if (cleanModel === 'ipad 4') return 'iPad (4th generation)';
-    if (cleanModel === 'iphone 15 pro') return 'iPhone 15 Pro';
-    // Fallback default if it's an unmapped Apple device
-    return model || 'iPhone';
+      return `iPad (${digit}${suffix} generation)`; 
+    }
+    return cleanModel;
   }
 
-  // Rule 2: Corporate brand isolation adjustments
-  if (cleanBrand === 'google') return 'Google Pixel';
-  if (cleanBrand === 'samsung') return 'Samsung Galaxy';
-  if (cleanBrand === 'motorola') return 'Motorola Mobility';
-
-  // Rule 3: Catch-all fallback default 
-  return model || brand || 'Smartphone';
+  // Fallback string scrubber if base model_text fields ever return missing or empty values
+  const cleanBrand = (brand || '').trim();
+  const cleanModelFallback = (model || '').trim();
+  return `${cleanBrand} ${cleanModelFallback}`
+    .replace(/\(.*?\)/g, '')                     
+    .replace(/lcd|compatible|battery|screen|assembly/i, '') 
+    .replace(/[^a-zA-Z0-9\s-]/g, '')             
+    .trim();
 }
 
 /**
- * FETCH LAYER:
- * Contacts the explicit MediaWiki engine for high-res device thumbnails
+ * FETCH LAYER (WIKIPEDIA):
+ * Queries the live Open MediaWiki engine for primary device page thumbnails
  */
 async function fetchWikipediaDeviceImage(brand: string, model: string): Promise<string | null> {
-  // Resolve our clean mapped title target
   const wikiTargetTitle = mapProductToWikipediaTitle(brand, model);
 
   try {
-    // We request a 400px thumbnail asset specifically targeting our exact page identifier title
     const wikiUrl = `https://wikipedia.org{encodeURIComponent(
       wikiTargetTitle
     )}&prop=pageimages&format=json&pithumbsize=400&origin=*`;
@@ -72,14 +62,13 @@ async function fetchWikipediaDeviceImage(brand: string, model: string): Promise<
 
     if (pages) {
       const pageId = Object.keys(pages);
-      // Verify if a real page was matched (-1 implies Wikipedia did not find the article title)
       if (pageId && pageId[0] !== "-1" && pages[pageId[0]].thumbnail) {
         return pages[pageId[0]].thumbnail.source;
       }
     }
     return null;
   } catch (error) {
-    console.error(`Wikipedia Mapping Engine failed for: ${wikiTargetTitle}`, error);
+    console.error(`Wikipedia Engine bypass for title: ${wikiTargetTitle}`, error);
     return null;
   }
 }
@@ -91,33 +80,57 @@ export async function GET(request: NextRequest) {
     return NextResponse.json([]);
   }
 
-  const productsArray = Object.values(mobileSentrixProducts);
+  try {
+    // 2. Formulate production URL paths matching your inventory API documentation
+    const liveApiUrl = `${BASE_URL}/api/rest/products?limit=15&page=1&pageinfo=1&search=${encodeURIComponent(query)}`;
 
-  // Filter items matching the query text string inside titles or brand structures
-  const filteredProducts = productsArray.filter(product => 
-    product.name?.toLowerCase().includes(query) || 
-    product.model_text?.toLowerCase().includes(query)
-  );
+    // 3. Mount pre-requirement credentials to authenticate the inbound request stream
+    const mobileSentrixResponse = await fetch(liveApiUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-Consumer-Key': CONSUMER_KEY,
+        'X-Consumer-Secret': CONSUMER_SECRET,
+        'X-Access-Token': ACCESS_TOKEN,
+        'X-Access-Token-Secret': ACCESS_TOKEN_SECRET,
+      },
+      next: { revalidate: 30 } 
+    });
 
-  // Parallel asynchronous fetching mapped directly to the cleaned title array rows
-  const integratedResults = await Promise.all(
-    filteredProducts.map(async (product) => {
-      const wikiImage = await fetchWikipediaDeviceImage(
-        product.manufacturer_text, 
-        product.model_text
-      );
+    if (!mobileSentrixResponse.ok) {
+      throw new Error(`MobileSentrix server responded with code: ${mobileSentrixResponse.status}`);
+    }
 
-      return {
-        id: product.entity_id,
-        sku: product.sku,
-        name: product.name,
-        price: parseFloat(product.price || '0').toFixed(2),
-        brand: product.manufacturer_text,
-        deviceModel: product.model_text,
-        displayImage: wikiImage || product.default_image || '/images/no-image.png'
-      };
-    })
-  );
+    const rawData = await mobileSentrixResponse.json();
+    
+    // Support object dictionaries and indexed lists uniformly
+    const productsArray = Array.isArray(rawData) ? rawData : Object.values(rawData);
 
-  return NextResponse.json(integratedResults);
+    // 4. Concurrently pull Wikipedia images for all filtered results in parallel
+    const integratedResults = await Promise.all(
+      productsArray.map(async (product: any) => {
+        const wikiImage = await fetchWikipediaDeviceImage(
+          product.manufacturer_text, 
+          product.model_text
+        );
+
+        return {
+          id: product.entity_id,
+          sku: product.sku,
+          name: product.name,
+          price: parseFloat(product.price || '0').toFixed(2),
+          brand: product.manufacturer_text || 'Generic',
+          deviceModel: product.model_text || 'Hardware',
+          displayImage: wikiImage || product.default_image || '/images/no-image.png'
+        };
+      })
+    );
+
+    return NextResponse.json(integratedResults);
+
+  } catch (error: any) {
+    console.error("Live lookup routing exception:", error.message);
+    return NextResponse.json({ error: 'Failed to complete query execution' }, { status: 500 });
+  }
 }
