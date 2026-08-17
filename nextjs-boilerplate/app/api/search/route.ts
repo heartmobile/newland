@@ -1,7 +1,7 @@
 // app/api/search/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
-// Represents your live raw products payload dictionary format
+// This is your raw MobileSentrix product shape mock data dictionary
 const mobileSentrixProducts: Record<string, any> = {
   "73": {
     "entity_id": "73",
@@ -24,15 +24,44 @@ const mobileSentrixProducts: Record<string, any> = {
 };
 
 /**
- * Searches the Wikipedia API using the high-level device model (e.g., "iPad 2") 
- * to fetch clean product illustrations instead of hardware part photos.
+ * STRATEGY MAPPING LAYER:
+ * Converts raw product meta-strings into exact, authoritative Wikipedia Article Titles.
  */
-async function fetchWikipediaDeviceImage(modelText: string): Promise<string | null> {
-  if (!modelText) return null;
+function mapProductToWikipediaTitle(brand: string, model: string): string {
+  const cleanBrand = (brand || '').toLowerCase().trim();
+  const cleanModel = (model || '').toLowerCase().trim();
+
+  // Rule 1: Specific Apple generational remapping
+  if (cleanBrand === 'apple' || cleanModel.includes('ipad') || cleanModel.includes('iphone')) {
+    if (cleanModel === 'ipad 2') return 'iPad (2nd generation)';
+    if (cleanModel === 'ipad 3') return 'iPad (3rd generation)';
+    if (cleanModel === 'ipad 4') return 'iPad (4th generation)';
+    if (cleanModel === 'iphone 15 pro') return 'iPhone 15 Pro';
+    // Fallback default if it's an unmapped Apple device
+    return model || 'iPhone';
+  }
+
+  // Rule 2: Corporate brand isolation adjustments
+  if (cleanBrand === 'google') return 'Google Pixel';
+  if (cleanBrand === 'samsung') return 'Samsung Galaxy';
+  if (cleanBrand === 'motorola') return 'Motorola Mobility';
+
+  // Rule 3: Catch-all fallback default 
+  return model || brand || 'Smartphone';
+}
+
+/**
+ * FETCH LAYER:
+ * Contacts the explicit MediaWiki engine for high-res device thumbnails
+ */
+async function fetchWikipediaDeviceImage(brand: string, model: string): Promise<string | null> {
+  // Resolve our clean mapped title target
+  const wikiTargetTitle = mapProductToWikipediaTitle(brand, model);
 
   try {
+    // We request a 400px thumbnail asset specifically targeting our exact page identifier title
     const wikiUrl = `https://wikipedia.org{encodeURIComponent(
-      modelText
+      wikiTargetTitle
     )}&prop=pageimages&format=json&pithumbsize=400&origin=*`;
 
     const res = await fetch(wikiUrl);
@@ -43,13 +72,14 @@ async function fetchWikipediaDeviceImage(modelText: string): Promise<string | nu
 
     if (pages) {
       const pageId = Object.keys(pages);
-      if (pageId && pageId !== "-1" && pages[pageId].thumbnail) {
-        return pages[pageId].thumbnail.source;
+      // Verify if a real page was matched (-1 implies Wikipedia did not find the article title)
+      if (pageId && pageId[0] !== "-1" && pages[pageId[0]].thumbnail) {
+        return pages[pageId[0]].thumbnail.source;
       }
     }
     return null;
   } catch (error) {
-    console.error(`Wikipedia image fetch failure for model: ${modelText}`, error);
+    console.error(`Wikipedia Mapping Engine failed for: ${wikiTargetTitle}`, error);
     return null;
   }
 }
@@ -61,19 +91,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.json([]);
   }
 
-  // 1. Flatten the product dictionary into an array structure for processing
   const productsArray = Object.values(mobileSentrixProducts);
 
-  // 2. Filter listings where the item title or device model matches the query string
+  // Filter items matching the query text string inside titles or brand structures
   const filteredProducts = productsArray.filter(product => 
     product.name?.toLowerCase().includes(query) || 
     product.model_text?.toLowerCase().includes(query)
   );
 
-  // 3. Resolve matching Wikipedia device coverage illustrations in parallel
+  // Parallel asynchronous fetching mapped directly to the cleaned title array rows
   const integratedResults = await Promise.all(
     filteredProducts.map(async (product) => {
-      const wikiImage = await fetchWikipediaDeviceImage(product.model_text);
+      const wikiImage = await fetchWikipediaDeviceImage(
+        product.manufacturer_text, 
+        product.model_text
+      );
 
       return {
         id: product.entity_id,
