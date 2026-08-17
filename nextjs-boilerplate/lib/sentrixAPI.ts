@@ -1,6 +1,10 @@
 // lib/sentrixApi.ts
 import { generateOAuthHeader } from './authSigner';
 
+// ============================================================================
+// DATA INTERFACES & STRUCTS
+// ============================================================================
+
 export interface CartItemInput { sku?: string; entity_id?: string; qty: number; update?: number; }
 export interface TaxIdentifier { vat_prefix: string; vat_number: string | number; }
 
@@ -24,6 +28,57 @@ export interface OrderInput {
   quote_id: string; billing_id: string; shipping_id: string;
   shipping_method: string; payment_method: 'mygateway'; po_number: string;
 }
+
+export interface CustomerRecord {
+  entity_id?: string;
+  email: string;
+  firstname: string;
+  lastname: string;
+  mobile: string;
+  username?: string;
+}
+
+export interface CustomerDictionaryResponse {
+  [customerId: string]: CustomerRecord;
+}
+
+export interface CustomerAddress {
+  entity_id: string;
+  firstname: string;
+  middlename?: string | null;
+  lastname: string;
+  company?: string | null;
+  city: string;
+  country_id: string;
+  region: string;
+  postcode: string;
+  telephone: string;
+  fax?: string | null;
+  street: string[];
+  is_default_billing: 0 | 1;
+  is_default_shipping: 0 | 1;
+  vat_numbers?: TaxIdentifier[];
+}
+
+export interface CustomerNoteItem {
+  id: number;
+  text: string;
+  created_at: string;
+  author_name: string;
+  author_email: string;
+}
+
+export interface GetCustomerNotesResponse {
+  success: boolean;
+  total: number;
+  page: number;
+  per_page: number;
+  notes: CustomerNoteItem[];
+}
+
+// ============================================================================
+// CORE SERVICE ENGINE CLASS
+// ============================================================================
 
 export class SentrixApiService {
   private baseUrl: string;
@@ -55,6 +110,7 @@ export class SentrixApiService {
     return response.json();
   }
 
+  // --- Auth & Profile Infrastructure ---
   async createCustomer(customerData: CustomerRegistrationInput): Promise<any> {
     return this.request('/api/rest/createcustomer', 'POST', { customrest: "1", ...customerData });
   }
@@ -63,8 +119,24 @@ export class SentrixApiService {
     return this.request(`/api/rest/searchcustomers?q=${encodeURIComponent(query)}`, 'GET');
   }
 
+  async getCustomers(): Promise<CustomerDictionaryResponse> {
+    return this.request('/api/rest/customers', 'GET');
+  }
+
+  async getCustomerById(customerId: string | number): Promise<CustomerDictionaryResponse> {
+    return this.request(`/api/rest/customers/${customerId}`, 'GET');
+  }
+
+  async getCustomersByStoreLocation(storeLocationId: string | number): Promise<CustomerDictionaryResponse> {
+    return this.request(`/api/rest/customers?filter[1][attribute]=store_location_id&filter[1][eq]=${encodeURIComponent(storeLocationId)}`, 'GET');
+  }
+
   async generateMagicLoginToken(email: string): Promise<any> {
     return this.request('/api/rest/generatetoken', 'POST', { customrest: 1, email });
+  }
+
+  async requestForgotPassword(identifier: string): Promise<any> {
+    return this.request(`/api/rest/forgotpassword?email=${encodeURIComponent(identifier)}`, 'GET');
   }
 
   buildAutoLoginRedirectUrl(consumerName: string, callback: string, token: string): string {
@@ -75,6 +147,28 @@ export class SentrixApiService {
       `&callback=${encodeURIComponent(callback)}&customer_email=${encodeURIComponent(token)}`;
   }
 
+  // --- Account Notes Logging Engine ---
+  async getCustomerNotes(customerId: string | number, page: number = 1, perPage: number = 10): Promise<GetCustomerNotesResponse> {
+    return this.request(`/api/rest/customers/${customerId}/notes?page=${page}&per_page=${perPage}`, 'GET');
+  }
+
+  async createCustomerNote(customerId: string | number, text: string, authorEmail: string): Promise<CustomerNoteItem> {
+    return this.request(`/api/rest/customers/${customerId}/notes`, 'POST', { customrest: 1, text, author_email: authorEmail });
+  }
+
+  // --- Address Book Management ---
+  async getCustomerAddresses(customerId: string | number): Promise<CustomerAddress[]> {
+    return this.request(`/api/rest/customers/${customerId}/addresses`, 'GET');
+  }
+
+  async getCustomerDefaultAddresses(customerId: string | number): Promise<CustomerAddress[]> {
+    return this.request(`/api/rest/customers/${customerId}/addresses?default=1`, 'GET');
+  }
+
+  async getAddressById(addressId: string | number): Promise<CustomerAddress> {
+    return this.request(`/api/rest/customers/addresses/${addressId}`, 'GET');
+  }
+
   async addCustomerAddress(customerId: string | number, addressData: AddressPayload): Promise<any> {
     return this.request(`/api/rest/customers/${customerId}/addresses`, 'POST', { customrest: 1, ...addressData });
   }
@@ -83,10 +177,12 @@ export class SentrixApiService {
     return this.request(`/api/rest/customers/addresses/${addressId}`, 'PUT', addressData);
   }
 
+  // --- Digital Cart Operations ---
   async getCart(): Promise<any> { return this.request('/api/rest/cart', 'GET', { customrest: 1 }); }
   async modifyCartItems(products: CartItemInput[]): Promise<any> { return this.request('/api/rest/cart', 'POST', { customrest: 1, products }); }
   async clearCart(): Promise<any> { return this.request('/api/rest/cart', 'DELETE', { customrest: 1 }); }
 
+  // --- Checkout Processing Core ---
   async createOrder(orderData: OrderInput): Promise<any> {
     return this.request('/api/rest/createorder', 'POST', { customrest: "1", ...orderData });
   }
