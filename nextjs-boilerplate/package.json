@@ -1,4 +1,10 @@
 {
+"dependencies": {
+  "next": "latest",
+  "react": "latest",
+  "react-dom": "latest"
+}
+
   "name": "nextjs",
   "version": "0.1.0",
   "private": true,
