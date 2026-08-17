@@ -1,41 +1,50 @@
 // app/api/search/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
-// 1. Pull secure configuration from environment variables
-const BASE_URL = process.env.MOBILESENTRIX_BASE_URL || 'https://mobilesentrix.com'; // Adjust to your specific API host if different
+// 1. Core integration environment variables
+const BASE_URL = process.env.MOBILESENTRIX_BASE_URL || 'https://mobilesentrix.com';
 const CONSUMER_KEY = process.env.MOBILESENTRIX_CONSUMER_KEY || '';
 const CONSUMER_SECRET = process.env.MOBILESENTRIX_CONSUMER_SECRET || '';
 const ACCESS_TOKEN = process.env.MOBILESENTRIX_ACCESS_TOKEN || '';
 const ACCESS_TOKEN_SECRET = process.env.MOBILESENTRIX_ACCESS_TOKEN_SECRET || '';
 
 /**
- * STRATEGY MAPPING LAYER:
- * Converts raw product text into accurate, authoritative Wikipedia Article Titles.
+ * DYNAMIC CLEANING ENGINE:
+ * Automatically formats variations into exact Wikipedia page titles on the fly.
+ * No hardcoded device lists needed.
  */
 function mapProductToWikipediaTitle(brand: string, model: string): string {
-  const cleanBrand = (brand || '').toLowerCase().trim();
-  const cleanModel = (model || '').toLowerCase().trim();
+  if (model && model.trim().length > 0) {
+    const cleanModel = model.trim();
+    
+    // Automatically catches all iPads and appends correct grammatical generation suffixes
+    if (/^ipad\s+\d+$/i.test(cleanModel)) {
+      const match = cleanModel.match(/\d+/);
+      const digit = match ? match[0] : '';
+      
+      let suffix = 'th';
+      if (digit === '1') suffix = 'st';
+      if (digit === '2') suffix = 'nd';
+      if (digit === '3') suffix = 'rd';
 
-  // Rule 1: Specific Apple generational remapping
-  if (cleanBrand === 'apple' || cleanModel.includes('ipad') || cleanModel.includes('iphone')) {
-    if (cleanModel === 'ipad 2') return 'iPad (2nd generation)';
-    if (cleanModel === 'ipad 3') return 'iPad (3rd generation)';
-    if (cleanModel === 'ipad 4') return 'iPad (4th generation)';
-    if (cleanModel === 'iphone 15 pro') return 'iPhone 15 Pro';
-    return model || 'iPhone';
+      return `iPad (${digit}${suffix} generation)`; 
+    }
+    return cleanModel;
   }
 
-  // Rule 2: Corporate brand isolation adjustments
-  if (cleanBrand === 'google') return 'Google Pixel';
-  if (cleanBrand === 'samsung') return 'Samsung Galaxy';
-  if (cleanBrand === 'motorola') return 'Motorola Mobility';
-
-  return model || brand || 'Smartphone';
+  // Fallback string scrubber if base model_text fields ever return missing or empty values
+  const cleanBrand = (brand || '').trim();
+  const cleanModelFallback = (model || '').trim();
+  return `${cleanBrand} ${cleanModelFallback}`
+    .replace(/\(.*?\)/g, '')                     
+    .replace(/lcd|compatible|battery|screen|assembly/i, '') 
+    .replace(/[^a-zA-Z0-9\s-]/g, '')             
+    .trim();
 }
 
 /**
  * FETCH LAYER (WIKIPEDIA):
- * Contacts the explicit MediaWiki engine for high-res device thumbnails
+ * Queries the live Open MediaWiki engine for primary device page thumbnails
  */
 async function fetchWikipediaDeviceImage(brand: string, model: string): Promise<string | null> {
   const wikiTargetTitle = mapProductToWikipediaTitle(brand, model);
@@ -53,13 +62,13 @@ async function fetchWikipediaDeviceImage(brand: string, model: string): Promise<
 
     if (pages) {
       const pageId = Object.keys(pages);
-      if (pageId && pageId !== "-1" && pages[pageId].thumbnail) {
-        return pages[pageId].thumbnail.source;
+      if (pageId && pageId[0] !== "-1" && pages[pageId[0]].thumbnail) {
+        return pages[pageId[0]].thumbnail.source;
       }
     }
     return null;
   } catch (error) {
-    console.error(`Wikipedia Mapping Engine failed for: ${wikiTargetTitle}`, error);
+    console.error(`Wikipedia Engine bypass for title: ${wikiTargetTitle}`, error);
     return null;
   }
 }
@@ -72,11 +81,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // 2. Build the live REST URL as requested in Image 1 & 3
-    // Pulls maximum 15 items and filters by device matching text parameters
+    // 2. Formulate production URL paths matching your inventory API documentation
     const liveApiUrl = `${BASE_URL}/api/rest/products?limit=15&page=1&pageinfo=1&search=${encodeURIComponent(query)}`;
 
-    // 3. Mount pre-requirement authorization tokens as specified in Image 1
+    // 3. Mount pre-requirement credentials to authenticate the inbound request stream
     const mobileSentrixResponse = await fetch(liveApiUrl, {
       method: 'GET',
       headers: {
@@ -88,19 +96,19 @@ export async function GET(request: NextRequest) {
         'X-Access-Token': ACCESS_TOKEN,
         'X-Access-Token-Secret': ACCESS_TOKEN_SECRET,
       },
-      next: { revalidate: 30 } // Cache inventory states for 30 seconds to speed up typing
+      next: { revalidate: 30 } 
     });
 
     if (!mobileSentrixResponse.ok) {
-      throw new Error(`MobileSentrix API rejected connection with status: ${mobileSentrixResponse.status}`);
+      throw new Error(`MobileSentrix server responded with code: ${mobileSentrixResponse.status}`);
     }
 
     const rawData = await mobileSentrixResponse.json();
     
-    // Flatten dictionary format if incoming object records are keyed by ID integers
+    // Support object dictionaries and indexed lists uniformly
     const productsArray = Array.isArray(rawData) ? rawData : Object.values(rawData);
 
-    // 4. Parallel asynchronous fetching mapping directly to the live data response arrays
+    // 4. Concurrently pull Wikipedia images for all filtered results in parallel
     const integratedResults = await Promise.all(
       productsArray.map(async (product: any) => {
         const wikiImage = await fetchWikipediaDeviceImage(
@@ -123,7 +131,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(integratedResults);
 
   } catch (error: any) {
-    console.error("Live integration search failure:", error.message);
-    return NextResponse.json({ error: 'Failed to stream live results' }, { status: 500 });
+    console.error("Live lookup routing exception:", error.message);
+    return NextResponse.json({ error: 'Failed to complete query execution' }, { status: 500 });
   }
 }
