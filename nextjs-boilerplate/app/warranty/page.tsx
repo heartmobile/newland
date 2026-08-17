@@ -13,7 +13,7 @@ export default function WarrantyPage() {
           Warranty & Returns Policy
         </h1>
         <p className="text-gray-600 leading-relaxed">
-          Our comprehensive protection details and hardware returns policies are currently being updated. For immediate assistance regarding a replacement part or component warranty claim, please contact our support team directly.
+          Our comprehensive protection details and hardware returns policies are currently being updated. For immediate assistance regarding a replacement part or component warranty claim, please contact our support team directly..
         </p>
       </div>
     </main>
