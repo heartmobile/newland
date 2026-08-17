@@ -76,6 +76,76 @@ export interface GetCustomerNotesResponse {
   notes: CustomerNoteItem[];
 }
 
+// --- Sales Order Interfaces ---
+export interface OrderAddressItem {
+  region: string;
+  postcode: string;
+  lastname: string;
+  street: string;
+  city: string;
+  email?: string;
+  telephone: string;
+  country_id: string;
+  firstname: string;
+  address_type: 'billing' | 'shipping';
+  company: string | null;
+}
+
+export interface OrderProductItem {
+  item_id: string | number;
+  parent_item_id?: string | number | null;
+  product_id?: string | number;
+  sku: string;
+  name: string;
+  qty_canceled: string;
+  qty_invoiced: string;
+  qty_ordered: string;
+  qty_refunded: string;
+  qty_shipped: string;
+  price: string;
+  row_total?: string;
+  base_original_price?: string;
+  tax_percent?: string;
+  tax_amount?: string;
+  discount_amount?: string;
+  base_row_total?: string;
+  price_incl_tax?: string;
+  row_total_incl_tax?: string;
+  product_attribute_setid: string | number;
+  imei?: string[];
+}
+
+export interface OrderDetailsRecord {
+  entity_id: string;
+  status: string;
+  shipping_description: string;
+  customer_id: string | null;
+  discount_amount: string;
+  grand_total: string;
+  shipping_amount: string;
+  shipping_tax_amount?: string;
+  subtotal: string;
+  tax_amount: string;
+  increment_id: string;
+  customer_email: string;
+  store_currency_code: string;
+  created_at: string;
+  updated_at: string;
+  shipping_incl_tax?: string;
+  store_location_id: string | number | null;
+  delivery_date: string | null;
+  payment_method: string;
+  tracking_number: string | null;
+  tax_name: string | null;
+  tax_rate: string | null;
+  addresses: OrderAddressItem[];
+  order_items: OrderProductItem[];
+}
+
+export interface OrdersDictionaryResponse {
+  [orderEntityId: string]: OrderDetailsRecord;
+}
+
 // ============================================================================
 // CORE SERVICE ENGINE CLASS
 // ============================================================================
@@ -199,4 +269,6 @@ export class SentrixApiService {
   async createOrder(orderData: OrderInput): Promise<any> {
     return this.request('/api/rest/createorder', 'POST', { customrest: "1", ...orderData });
   }
-}
+
+  // --- Sales Order History Layer ---
+  async getOrders(): Promise<OrdersDictionaryResponse> {
