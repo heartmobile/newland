@@ -13,7 +13,6 @@ function unauthorized(message = 'Admin credentials are required.') {
 }
 
 export function middleware(request: NextRequest) {
-  // 1. Basic Auth Verification for /admin routes
   if (request.nextUrl.pathname.startsWith('/admin')) {
     const adminUsername = process.env.ADMIN_USERNAME;
     const adminPassword = process.env.ADMIN_PASSWORD;
@@ -50,7 +49,6 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // 2. Set headers & CSP (allowing 'unsafe-eval' in dev mode to fix log errors)
   const isDev = process.env.NODE_ENV === 'development';
   const requestHeaders = new Headers(request.headers);
   
