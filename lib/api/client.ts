@@ -93,15 +93,15 @@ export class BaseApiClient {
   protected accessToken: string;
   protected accessTokenSecret: string;
 
-  constructor(config?: ApiClientConfig) {
-    this.baseUrl = config?.baseUrl || process.env.MOBILESENTRIX_API_URL || 'https://preprod.mobilesentrix.ca';
-    this.consumerKey = config?.consumerKey || process.env.MOBILESENTRIX_CONSUMER_KEY || '';
-    this.consumerSecret = config?.consumerSecret || process.env.MOBILESENTRIX_CONSUMER_SECRET || '';
-    this.accessToken = config?.accessToken || process.env.MOBILESENTRIX_ACCESS_TOKEN || '';
-    this.accessTokenSecret = config?.accessTokenSecret || process.env.MOBILESENTRIX_ACCESS_TOKEN_SECRET || '';
+  //constructor(config?: ApiClientConfig) {
+  // this.baseUrl = config?.baseUrl || process.env.MOBILESENTRIX_API_URL || 'https://preprod.mobilesentrix.ca';
+  // this.consumerKey = config?.consumerKey || process.env.MOBILESENTRIX_CONSUMER_KEY || '';
+  //  this.consumerSecret = config?.consumerSecret || process.env.MOBILESENTRIX_CONSUMER_SECRET || '';
+  //  this.accessToken = config?.accessToken || process.env.MOBILESENTRIX_ACCESS_TOKEN || '';
+   // this.accessTokenSecret = config?.accessTokenSecret || process.env.MOBILESENTRIX_ACCESS_TOKEN_SECRET || '';
 
-    if (!this.consumerKey || !this.consumerSecret || !this.accessToken || !this.accessTokenSecret) {
-      throw new Error('MobileSentrix OAuth credentials are not configured.');
+   // if (!this.consumerKey || !this.consumerSecret || !this.accessToken || !this.accessTokenSecret) {
+   //   throw new Error('MobileSentrix OAuth credentials are not configured.');
     }
   }
 
