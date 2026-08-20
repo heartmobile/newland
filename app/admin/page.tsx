@@ -1,90 +1,84 @@
-import { getDisplayPrice, PRODUCTS } from '@/lib/products';
-import { headers } from 'next/headers';
-import { notFound } from 'next/navigation';
+import { NextRequest, NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic';
+const MINIMUM_PASSWORD_LENGTH = 16;
 
-export const metadata = {
-  title: 'Admin',
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+function unauthorized(message = 'Admin credentials are required.') {
+  return new NextResponse(message, {
+    status: 401,
+    headers: {
+      'Cache-Control': 'no-store',
+      'WWW-Authenticate': 'Basic realm="Heart Mobile Admin", charset="UTF-8"',
+    },
+  });
+}
 
-export default async function AdminPage() {
-  const requestHeaders = await headers();
-  if (requestHeaders.get('x-heartmobile-admin') !== 'authenticated') {
-    notFound();
+export function middleware(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    const adminUsername = process.env.ADMIN_USERNAME;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminUsername || !adminPassword || adminPassword.length < MINIMUM_PASSWORD_LENGTH) {
+      return new NextResponse('Admin access is not configured.', {
+        status: 503,
+        headers: { 'Cache-Control': 'no-store' },
+      });
+    }
+
+    const authorization = request.headers.get('authorization');
+    if (!authorization?.startsWith('Basic ')) {
+      return unauthorized();
+    }
+
+    let suppliedCredentials: string;
+    try {
+      suppliedCredentials = atob(authorization.slice(6));
+    } catch {
+      return unauthorized('Invalid admin credentials.');
+    }
+
+    const separatorIndex = suppliedCredentials.indexOf(':');
+    if (separatorIndex === -1) {
+      return unauthorized('Invalid admin credentials.');
+    }
+
+    const username = suppliedCredentials.slice(0, separatorIndex);
+    const password = suppliedCredentials.slice(separatorIndex + 1);
+
+    if (username !== adminUsername || password !== adminPassword) {
+      return unauthorized('Invalid admin credentials.');
+    }
   }
 
-  const devices = PRODUCTS.filter((product) => product.category === 'device');
-  const screens = PRODUCTS.filter((product) => product.category === 'screen');
-  const inventoryValue = PRODUCTS.reduce(
-    (total, product) => total + getDisplayPrice(product) * product.stockQuantity,
-    0,
-  );
+  const isDev = process.env.NODE_ENV === 'development';
+  const requestHeaders = new Headers(request.headers);
+  
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    requestHeaders.set('x-heartmobile-admin', 'authenticated');
+  }
 
-  return (
-    <div className="page shell admin-page">
-      <div className="page-heading">
-        <span className="eyebrow">Private workspace</span>
-        <h1>Heart Mobile admin</h1>
-        <p>Monitor the preview catalog while supplier inventory and checkout are connected.</p>
-      </div>
+  const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''};
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' blob: data:;
+    font-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+  `;
 
-      <section className="admin-stats" aria-label="Catalog summary">
-        <article>
-          <span>Total products</span>
-          <strong>{PRODUCTS.length}</strong>
-        </article>
-        <article>
-          <span>Devices / screens</span>
-          <strong>{devices.length} / {screens.length}</strong>
-        </article>
-        <article>
-          <span>Units available</span>
-          <strong>{PRODUCTS.reduce((total, product) => total + product.stockQuantity, 0)}</strong>
-        </article>
-        <article>
-          <span>Retail inventory value</span>
-          <strong>CA${inventoryValue.toLocaleString('en-CA', { maximumFractionDigits: 0 })}</strong>
-        </article>
-      </section>
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 
-      <section className="admin-panel">
-        <div className="admin-panel-heading">
-          <div>
-            <span className="eyebrow">Preview inventory</span>
-            <h2>Catalog status</h2>
-          </div>
-          <span className="admin-badge">Admin only</span>
-        </div>
-        <div className="admin-table-wrap">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>SKU</th>
-                <th>Type</th>
-                <th>Stock</th>
-                <th>Retail price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {PRODUCTS.map((product) => (
-                <tr key={product.id}>
-                  <td><strong>{product.name}</strong></td>
-                  <td>{product.sku}</td>
-                  <td>{product.category === 'device' ? 'Device' : 'Screen'}</td>
-                  <td>{product.stockQuantity}</td>
-                  <td>CA${getDisplayPrice(product).toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </div>
-  );
+  response.headers.set('Content-Security-Policy', cspHeader.replace(/\s{2,}/g, ' ').trim());
+
+  return response;
 }
+
+export const config = {
+  matcher: ['/admin/:path*'],
+};
