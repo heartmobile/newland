@@ -48,37 +48,10 @@ export function middleware(request: NextRequest) {
       return unauthorized('Invalid admin credentials.');
     }
   }
-
-  const isDev = process.env.NODE_ENV === 'development';
-  const requestHeaders = new Headers(request.headers);
-  
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    requestHeaders.set('x-heartmobile-admin', 'authenticated');
-  }
-
-  const cspHeader = `
-    default-src 'self';
-    script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''};
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' blob: data:;
-    font-src 'self';
-    object-src 'none';
-    base-uri 'self';
-    form-action 'self';
-    frame-ancestors 'none';
-  `;
-
-  const response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
-
-  response.headers.set('Content-Security-Policy', cspHeader.replace(/\s{2,}/g, ' ').trim());
-
-  return response;
+export default function AdminPage() {
+  return (
+    <div>
+      <h1>Admin Dashboard</h1>
+    </div>
+  );
 }
-
-export const config = {
-  matcher: ['/admin/:path*'],
-};
