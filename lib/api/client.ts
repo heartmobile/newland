@@ -1,4 +1,4 @@
-// lib/api/client.ts
+/ lib/api/client.ts
 
 export interface ApiClientOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;
