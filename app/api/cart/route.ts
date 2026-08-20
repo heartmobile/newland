@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { SentrixApiService } from '@/lib/sentrixApi';
+import { SentrixApiService } from '@/lib/api';
 
 // 1. GET: Fetch Active Shopping Cart Details
 export async function GET() {
