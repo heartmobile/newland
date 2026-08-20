@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { SentrixApiService } from '@/lib/mobile-sentrixapi';
+import { SentrixApiService } from '@/lib/sentrixApi';
 
 export async function GET(request: Request) {
   try {
