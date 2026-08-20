@@ -1,119 +1,99 @@
-import { BaseApiClient } from './client';
+// lib/api/client.ts
 
-export interface CustomerAddress {
-  id?: number;
-  customer_id?: number;
-  firstname: string;
-  lastname: string;
-  street: string[];
-  city: string;
-  region: string;
-  postcode: string;
-  country_id: string;
-  telephone: string;
-  is_default_shipping?: boolean;
-  is_default_billing?: boolean;
+export interface ApiClientOptions extends RequestInit {
+  params?: Record<string, string | number | boolean | undefined>;
 }
 
-export interface MobileSentrixCustomer {
-  id: number;
-  email: string;
-  firstname: string;
-  lastname: string;
-  store_id?: number;
-  website_id?: number;
-  created_at?: string;
-  updated_at?: string;
-  addresses?: CustomerAddress[];
-  custom_attributes?: Array<{
-    attribute_code: string;
-    value: string;
-  }>;
+export class ApiError extends Error {
+  status: number;
+  data: any;
+
+  constructor(status: number, message: string, data?: any) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.data = data;
+  }
 }
 
-export interface CustomerPayload {
-  email: string;
-  firstname: string;
-  lastname: string;
-  addresses?: CustomerAddress[];
-}
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
-export interface CustomerQueryParams {
-  page?: string;
-  limit?: string;
-  email?: string;
-  search?: string;
-}
+export async function apiClient<T = any>(
+  endpoint: string,
+  options: ApiClientOptions = {}
+): Promise<T> {
+  const { params, headers, ...restOptions } = options;
 
-export class CustomersApiService extends BaseApiClient {
-  /**
-   * Fetch a list of customers (filterable by email or search term)
-   */
-  async getCustomers(
-    params: CustomerQueryParams = {},
-    bearerToken?: string
-  ): Promise<MobileSentrixCustomer[]> {
-    const queryParams: Record<string, string> = {};
-    if (params.page) queryParams.page = params.page;
-    if (params.limit) queryParams.limit = params.limit;
-    if (params.email) queryParams.email = params.email;
-    if (params.search) queryParams.search = params.search;
+  // Build query parameters if provided
+  let url = `${BASE_URL}${endpoint}`;
+  if (params) {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined) {
+        searchParams.append(key, String(value));
+      }
+    });
+    const queryString = searchParams.toString();
+    if (queryString) {
+      url += `?${queryString}`;
+    }
+  }
 
-    return this.request<MobileSentrixCustomer[]>(
-      '/api/rest/customers',
-      'GET',
-      undefined,
-      queryParams,
-      bearerToken
+  const defaultHeaders: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  const response = await fetch(url, {
+    headers: {
+      ...defaultHeaders,
+      ...headers,
+    },
+    ...restOptions,
+  });
+
+  if (!response.ok) {
+    let errorData;
+    try {
+      errorData = await response.json();
+    } catch {
+      errorData = null;
+    }
+    throw new ApiError(
+      response.status,
+      `API Request failed with status ${response.status}`,
+      errorData
     );
   }
 
-  /**
-   * Fetch a single customer profile by ID
-   */
-  async getCustomerById(
-    customerId: number | string,
-    bearerToken?: string
-  ): Promise<MobileSentrixCustomer> {
-    return this.request<MobileSentrixCustomer>(
-      `/api/rest/customers/${customerId}`,
-      'GET',
-      undefined,
-      {},
-      bearerToken
-    );
+  // Handle 204 No Content responses
+  if (response.status === 204) {
+    return {} as T;
   }
 
-  /**
-   * Create a new customer profile
-   */
-  async createCustomer(
-    customerData: CustomerPayload,
-    bearerToken?: string
-  ): Promise<MobileSentrixCustomer> {
-    return this.request<MobileSentrixCustomer>(
-      '/api/rest/customers',
-      'POST',
-      customerData,
-      {},
-      bearerToken
-    );
-  }
-
-  /**
-   * Update an existing customer profile
-   */
-  async updateCustomer(
-    customerId: number | string,
-    customerData: Partial<CustomerPayload>,
-    bearerToken?: string
-  ): Promise<MobileSentrixCustomer> {
-    return this.request<MobileSentrixCustomer>(
-      `/api/rest/customers/${customerId}`,
-      'PUT',
-      customerData,
-      {},
-      bearerToken
-    );
-  }
+  return response.json();
 }
+
+// Convenience methods for routes
+export const api = {
+  get: <T>(url: string, options?: ApiClientOptions) =>
+    apiClient<T>(url, { ...options, method: 'GET' }),
+
+  post: <T>(url: string, body?: any, options?: ApiClientOptions) =>
+    apiClient<T>(url, {
+      ...options,
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+
+  put: <T>(url: string, body?: any, options?: ApiClientOptions) =>
+    apiClient<T>(url, {
+      ...options,
+      method: 'PUT',
+      body: JSON.stringify(body),
+    }),
+
+  delete: <T>(url: string, options?: ApiClientOptions) =>
+    apiClient<T>(url, { ...options, method: 'DELETE' }),
+};
+
+export default apiClient;
