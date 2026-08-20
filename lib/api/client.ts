@@ -4,19 +4,16 @@ export interface ApiClientConfig {
   baseUrl?: string;
   consumerKey?: string;
   consumerSecret?: string;
-  accessToken?: string;
-  accessTokenSecret?: string;
 }
 
 /**
- * OAuth 1.0 signature generation for MobileSentrix API
+ * OAuth 1.0 signature generation ( Consumer Key & Secret only )
  */
-function generateOAuth1Signature(
+export function generateOAuth1Signature(
   method: string,
   url: string,
   params: Record<string, string>,
-  consumerSecret: string,
-  accessTokenSecret: string
+  consumerSecret: string
 ): string {
   // Create parameter string (sorted)
   const sortedParams = Object.keys(params)
@@ -31,10 +28,8 @@ function generateOAuth1Signature(
     encodeURIComponent(sortedParams),
   ].join('&');
 
-  // Signing key
-  const signingKey = `${encodeURIComponent(consumerSecret)}&${encodeURIComponent(
-    accessTokenSecret
-  )}`;
+  // Signing key using Consumer Secret
+  const signingKey = `${encodeURIComponent(consumerSecret)}&`;
 
   // HMAC-SHA1 signature
   const signature = crypto
@@ -48,19 +43,16 @@ function generateOAuth1Signature(
 /**
  * Generate OAuth 1.0 Authorization header
  */
-function generateOAuth1Header(
+export function generateOAuth1Header(
   method: string,
   url: string,
   bodyParams: Record<string, any>,
   consumerKey: string,
-  consumerSecret: string,
-  accessToken: string,
-  accessTokenSecret: string
+  consumerSecret: string
 ): string {
   // OAuth protocol parameters
   const oauthParams: Record<string, string> = {
     oauth_consumer_key: consumerKey,
-    oauth_token: accessToken,
     oauth_signature_method: 'HMAC-SHA1',
     oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
     oauth_nonce: crypto.randomBytes(16).toString('hex'),
@@ -73,8 +65,7 @@ function generateOAuth1Header(
     method,
     url,
     allParams,
-    consumerSecret,
-    accessTokenSecret
+    consumerSecret
   );
 
   // Build Authorization header
@@ -90,18 +81,22 @@ export class BaseApiClient {
   protected baseUrl: string;
   protected consumerKey: string;
   protected consumerSecret: string;
-  protected accessToken: string;
-  protected accessTokenSecret: string;
 
   constructor(config?: ApiClientConfig) {
-    this.baseUrl = config?.baseUrl || process.env.MOBILESENTRIX_API_URL || 'https://preprod.mobilesentrix.ca';
-    this.consumerKey = config?.consumerKey || process.env.MOBILESENTRIX_CONSUMER_KEY || '';
-    this.consumerSecret = config?.consumerSecret || process.env.MOBILESENTRIX_CONSUMER_SECRET || '';
-    this.accessToken = config?.accessToken || process.env.MOBILESENTRIX_ACCESS_TOKEN || '';
-    this.accessTokenSecret = config?.accessTokenSecret || process.env.MOBILESENTRIX_ACCESS_TOKEN_SECRET || '';
+    this.baseUrl =
+      config?.baseUrl ||
+      process.env.MOBILESENTRIX_API_URL ||
+      'https://www.mobilesentrix.ca/api';
+    this.consumerKey =
+      config?.consumerKey || process.env.MOBILESENTRIX_CONSUMER_KEY || '';
+    this.consumerSecret =
+      config?.consumerSecret || process.env.MOBILESENTRIX_CONSUMER_SECRET || '';
 
-    if (!this.consumerKey || !this.consumerSecret || !this.accessToken || !this.accessTokenSecret) {
-      throw new Error('MobileSentrix OAuth credentials are not configured.');
+    // Softened check for 2-key authorization
+    if (!this.consumerKey || !this.consumerSecret) {
+      console.warn(
+        '⚠️ MobileSentrix Consumer Key or Secret missing. API calls will fail until configured.'
+      );
     }
   }
 
@@ -110,27 +105,27 @@ export class BaseApiClient {
     method: string = 'GET',
     bodyData?: Record<string, any>
   ): Promise<T> {
-    const url = `${this.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
-    
+    const url = `${this.baseUrl}${
+      endpoint.startsWith('/') ? endpoint : `/${endpoint}`
+    }`;
+
     // Prepare body
     const body = bodyData ? JSON.stringify(bodyData) : undefined;
-    
-    // Generate OAuth 1.0 header
+
+    // Generate OAuth 1.0 header using only Consumer Key and Secret
     const authHeader = generateOAuth1Header(
       method,
       url,
       bodyData || {},
       this.consumerKey,
-      this.consumerSecret,
-      this.accessToken,
-      this.accessTokenSecret
+      this.consumerSecret
     );
 
     const response = await fetch(url, {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': authHeader,
+        Authorization: authHeader,
       },
       body,
     });
@@ -138,7 +133,9 @@ export class BaseApiClient {
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(
-        `MobileSentrix API Error (${response.status}): ${errorText || response.statusText}`
+        `MobileSentrix API Error (${response.status}): ${
+          errorText || response.statusText
+        }`
       );
     }
 
@@ -146,6 +143,6 @@ export class BaseApiClient {
   }
 }
 
-// Alias for routes expecting SentrixApiService
+// Aliases and default exports for backwards compatibility across routes
 export class SentrixApiService extends BaseApiClient {}
 export default BaseApiClient;
