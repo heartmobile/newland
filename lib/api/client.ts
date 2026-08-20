@@ -1,99 +1,36 @@
-/ lib/api/client.ts
-
-export interface ApiClientOptions extends RequestInit {
-  params?: Record<string, string | number | boolean | undefined>;
+export interface ApiClientConfig {
+  apiKey?: string;
+  baseUrl?: string;
 }
 
-export class ApiError extends Error {
-  status: number;
-  data: any;
+export class BaseApiClient {
+  protected apiKey: string;
+  protected baseUrl: string;
 
-  constructor(status: number, message: string, data?: any) {
-    super(message);
-    this.name = 'ApiError';
-    this.status = status;
-    this.data = data;
+  constructor(config?: ApiClientConfig) {
+    this.apiKey = config?.apiKey || process.env.MOBILESENTRIX_API_KEY || '';
+    this.baseUrl = config?.baseUrl || process.env.MOBILESENTRIX_API_URL || 'https://www.mobilesentrix.com/api';
   }
-}
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
+  protected async request<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const url = `${this.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.apiKey}`,
+      ...options.headers,
+    };
 
-export async function apiClient<T = any>(
-  endpoint: string,
-  options: ApiClientOptions = {}
-): Promise<T> {
-  const { params, headers, ...restOptions } = options;
+    const response = await fetch(url, { ...options, headers });
 
-  // Build query parameters if provided
-  let url = `${BASE_URL}${endpoint}`;
-  if (params) {
-    const searchParams = new URLSearchParams();
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined) {
-        searchParams.append(key, String(value));
-      }
-    });
-    const queryString = searchParams.toString();
-    if (queryString) {
-      url += `?${queryString}`;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`API Error (${response.status}): ${errorText || response.statusText}`);
     }
+
+    return response.json();
   }
-
-  const defaultHeaders: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
-
-  const response = await fetch(url, {
-    headers: {
-      ...defaultHeaders,
-      ...headers,
-    },
-    ...restOptions,
-  });
-
-  if (!response.ok) {
-    let errorData;
-    try {
-      errorData = await response.json();
-    } catch {
-      errorData = null;
-    }
-    throw new ApiError(
-      response.status,
-      `API Request failed with status ${response.status}`,
-      errorData
-    );
-  }
-
-  // Handle 204 No Content responses
-  if (response.status === 204) {
-    return {} as T;
-  }
-
-  return response.json();
 }
 
-// Convenience methods for routes
-export const api = {
-  get: <T>(url: string, options?: ApiClientOptions) =>
-    apiClient<T>(url, { ...options, method: 'GET' }),
-
-  post: <T>(url: string, body?: any, options?: ApiClientOptions) =>
-    apiClient<T>(url, {
-      ...options,
-      method: 'POST',
-      body: JSON.stringify(body),
-    }),
-
-  put: <T>(url: string, body?: any, options?: ApiClientOptions) =>
-    apiClient<T>(url, {
-      ...options,
-      method: 'PUT',
-      body: JSON.stringify(body),
-    }),
-
-  delete: <T>(url: string, options?: ApiClientOptions) =>
-    apiClient<T>(url, { ...options, method: 'DELETE' }),
-};
-
-export default apiClient;
+// Alias for routes expecting SentrixApiService
+export class SentrixApiService extends BaseApiClient {}
+export default BaseApiClient;
