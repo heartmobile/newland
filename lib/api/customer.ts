@@ -1,4 +1,4 @@
-import { BaseApiClient } from './client';
+import { BaseApiClient } from './clients'; // ✅ Pointing to existing file
 
 export interface CustomerAddress {
   id?: number;
