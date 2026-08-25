@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { SentrixApiService, CustomerRegistrationInput } from '@/lib/api';
+import { CustomersApiService, CustomerRegistrationInput } from '@/lib/api'; // ✅ Change SentrixApiService to CustomersApiService
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const apiService = new SentrixApiService();
+    const apiService = new CustomersApiService(); // ✅ Change SentrixApiService to CustomersApiService
 
     // Ensure street configuration parses safely into a valid array structure
     const primaryStreet = Array.isArray(body.street) ? body.street[0] : body.street;
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     const registrationResult = await apiService.createCustomer(registrationPayload);
 
     // Differentiate backend state handling (e.g. username taken or email existing cases)
-    if (!registrationResult.success) {
+    if (registrationResult && registrationResult.success === false) {
       return NextResponse.json(registrationResult, { status: 400 });
     }
 
