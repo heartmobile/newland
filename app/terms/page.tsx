@@ -1,5 +1,4 @@
 export default function TermsPage() {
-  // Color palette matching your judicial reference image
   const primaryBlue = "#3664AD";
   const sectionBlue = "#2B5492";
 
@@ -30,7 +29,7 @@ export default function TermsPage() {
             </h2>
             <p style={{ marginBottom: "10px", lineHeight: "1.6" }}>
               <strong style={{ display: "block", color: "#222", marginBottom: "2px" }}>Agreement Overview</strong>
-              This Agreement governs your access to and use of Heart Mobile's website and all related services.
+              This Agreement governs your access to and use of Heart Mobile&apos;s website and all related services.
             </p>
             <p style={{ marginBottom: "10px", lineHeight: "1.6" }}>
               <strong style={{ display: "block", color: "#222", marginBottom: "2px" }}>Acceptance of Terms</strong>
@@ -49,7 +48,7 @@ export default function TermsPage() {
             </h2>
             <p style={{ lineHeight: "1.6" }}>
               <strong style={{ display: "block", color: "#222", marginBottom: "4px" }}>Limitation of Liability & Legal Scope</strong>
-              PLEASE READ THIS AGREEMENT CAREFULLY AS IT GOVERNS YOUR USE OF HEART MOBILE'S WEBSITE. IT EXEMPTS HEART MOBILE AND OTHER PERSONS FROM LIABILITY OR LIMITS THEIR LIABILITY, AND CONTAINS OTHER IMPORTANT PROVISIONS THAT YOU SHOULD READ.
+              PLEASE READ THIS AGREEMENT CAREFULLY AS IT GOVERNS YOUR USE OF HEART MOBILE&apos;S WEBSITE. IT EXEMPTS HEART MOBILE AND OTHER PERSONS FROM LIABILITY OR LIMITS THEIR LIABILITY, AND CONTAINS OTHER IMPORTANT PROVISIONS THAT YOU SHOULD READ.
             </p>
           </section>
 
