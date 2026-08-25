@@ -9,14 +9,14 @@ export interface ApiClientConfig {
 }
 
 /**
- * OAuth 1.0 signature generation for MobileSentrix API
+ * OAuth 1.0 signature generation for MobileSentrix API (Supports 2-Legged & 3-Legged)
  */
 function generateOAuth1Signature(
   method: string,
   url: string,
   params: Record<string, string>,
   consumerSecret: string,
-  accessTokenSecret: string
+  accessTokenSecret: string = ''
 ): string {
   // Create parameter string (sorted)
   const sortedParams = Object.keys(params)
@@ -31,18 +31,14 @@ function generateOAuth1Signature(
     encodeURIComponent(sortedParams),
   ].join('&');
 
-  // Signing key
-  const signingKey = `${encodeURIComponent(consumerSecret)}&${encodeURIComponent(
-    accessTokenSecret
-  )}`;
+  // In 2-legged OAuth, signingKey becomes `${consumerSecret}&`
+  const signingKey = `${encodeURIComponent(consumerSecret)}&${encodeURIComponent(accessTokenSecret)}`;
 
   // HMAC-SHA1 signature
-  const signature = crypto
+  return crypto
     .createHmac('sha1', signingKey)
     .update(baseString)
     .digest('base64');
-
-  return signature;
 }
 
 /**
@@ -54,18 +50,22 @@ function generateOAuth1Header(
   bodyParams: Record<string, any>,
   consumerKey: string,
   consumerSecret: string,
-  accessToken: string,
-  accessTokenSecret: string
+  accessToken: string = '',
+  accessTokenSecret: string = ''
 ): string {
   // OAuth protocol parameters
   const oauthParams: Record<string, string> = {
     oauth_consumer_key: consumerKey,
-    oauth_token: accessToken,
     oauth_signature_method: 'HMAC-SHA1',
     oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
     oauth_nonce: crypto.randomBytes(16).toString('hex'),
     oauth_version: '1.0',
   };
+
+  // Only append oauth_token if an access token actually exists
+  if (accessToken) {
+    oauthParams.oauth_token = accessToken;
+  }
 
   // Combine for signature calculation
   const allParams = { ...oauthParams, ...bodyParams };
@@ -100,8 +100,9 @@ export class BaseApiClient {
     this.accessToken = config?.accessToken || process.env.MOBILESENTRIX_ACCESS_TOKEN || '';
     this.accessTokenSecret = config?.accessTokenSecret || process.env.MOBILESENTRIX_ACCESS_TOKEN_SECRET || '';
 
-    if (!this.consumerKey || !this.consumerSecret || !this.accessToken || !this.accessTokenSecret) {
-      throw new Error('MobileSentrix OAuth credentials are not configured.');
+    // Only Consumer Key and Secret are mandatory for 2-Legged OAuth
+    if (!this.consumerKey || !this.consumerSecret) {
+      throw new Error('MobileSentrix Consumer Key and Consumer Secret are not configured.');
     }
   }
 
