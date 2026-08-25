@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from 'react';
-import type { Metadata } from 'next'; // Note: metadata export works in Next.js client components if structured or handled via layout, or we can keep it clean.
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -12,24 +11,14 @@ import {
 } from '@/lib/products';
 import { FEATURED_PHONE_FAMILIES } from '@/lib/phone-families';
 
-// If this causes a Next.js client component metadata warning, 
-// you can move the metadata export to a layout.tsx file for this route.
-export const metadata: Metadata = {
-  title: 'Refurbished Devices',
-  description:
-    'Compare refurbished iPhone and Samsung Galaxy families, submodels, condition grades, and available configurations.',
-};
-
 export default function PhonesPage() {
   const products = getProductsByCategory('device');
 
-  // Search and filter state for the live inventory table
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMake, setSelectedMake] = useState("All");
   const [selectedCondition, setSelectedCondition] = useState("All");
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
 
-  // Map product catalog to match filterable index requirements
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const matchesSearch = 
@@ -66,14 +55,12 @@ export default function PhonesPage() {
     <div className="page" style={{ background: "#f8f9fa", minHeight: "100vh", paddingBottom: "60px" }}>
       <div className="shell" style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
         
-        {/* Page Header */}
         <header className="page-heading" style={{ background: "#ffffff", borderBottom: "1px solid #eaeaea", padding: "40px 20px", marginBottom: "30px", borderRadius: "8px" }}>
           <span className="eyebrow" style={{ color: "#666", textTransform: "uppercase", fontSize: "0.8rem", letterSpacing: "1px", fontWeight: "600" }}>Refurbished smartphones</span>
           <h1 style={{ fontSize: "2.5rem", fontWeight: "750", color: "#111", margin: "8px 0 12px 0" }}>Devices</h1>
           <p style={{ color: "#555", fontSize: "1rem", maxWidth: "700px" }}>Live inventory feed connected directly via MobileSentrix catalog. Filter by submodel, storage, condition, or carrier below.</p>
         </header>
 
-        {/* Featured Families Banner Section */}
         <section className="featured-families" aria-labelledby="featured-families-title" style={{ marginBottom: "40px" }}>
           <div className="featured-heading" style={{ marginBottom: "20px" }}>
             <div>
@@ -98,7 +85,6 @@ export default function PhonesPage() {
           </div>
         </section>
 
-        {/* Search & Filter Toolbar */}
         <div style={{ background: "#fff", padding: "20px", borderRadius: "8px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", marginBottom: "24px", display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "center" }}>
           <div style={{ flex: "1 1 300px" }}>
             <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "6px", color: "#333" }}>
@@ -147,7 +133,6 @@ export default function PhonesPage() {
           </div>
         </div>
 
-        {/* Live Data Table Grid matching MobileSentrix layout */}
         <div style={{ background: "#fff", borderRadius: "8px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", overflowX: "auto", marginBottom: "24px" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.92rem" }}>
             <thead>
@@ -215,7 +200,6 @@ export default function PhonesPage() {
           </table>
         </div>
 
-        {/* Action Toolbar Footer */}
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", background: "#fff", padding: "20px", borderRadius: "8px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", marginBottom: "60px" }}>
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
             <button style={{ background: primaryRed, color: "#fff", border: "none", padding: "12px 24px", borderRadius: "6px", fontWeight: "600", cursor: "pointer" }}>
@@ -237,7 +221,6 @@ export default function PhonesPage() {
           </div>
         </div>
 
-        {/* Official MobileSentrix Grading Standards Reference Guide at Bottom */}
         <section className="grade-guide" aria-labelledby="grade-guide-title" style={{ background: "#fff", padding: "30px", borderRadius: "8px", borderTop: `4px solid ${primaryRed}`, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
           <div style={{ marginBottom: "20px" }}>
             <span className="eyebrow" style={{ color: "#666", textTransform: "uppercase", fontSize: "0.8rem", letterSpacing: "1px", fontWeight: "600" }}>Condition guide</span>
