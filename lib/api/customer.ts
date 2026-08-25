@@ -1,4 +1,4 @@
-
+import { BaseApiClient } from './client';
 
 export interface CustomerAddress {
   id?: number;
@@ -29,6 +29,32 @@ export interface MobileSentrixCustomer {
     attribute_code: string;
     value: string;
   }>;
+}
+
+export interface CustomerRegistrationInput {
+  firstname: string;
+  lastname: string;
+  username: string;
+  account_type?: string;
+  email: string;
+  mobile: string;
+  pre_mobile?: number;
+  prefix_main_country_id?: string;
+  password: string;
+  company_short?: string;
+  company?: string;
+  company_website?: string;
+  street: string[];
+  city: string;
+  region: string;
+  postcode: string;
+  country_id?: string;
+  telephone: string;
+  pre_address_mobile?: number;
+  prefix_country_id?: string;
+  vat_numbers?: string[];
+  user_code?: string;
+  describes_business?: string;
 }
 
 export interface CustomerPayload {
@@ -88,10 +114,10 @@ export class CustomersApiService extends BaseApiClient {
    * Create a new customer profile
    */
   async createCustomer(
-    customerData: CustomerPayload,
+    customerData: CustomerRegistrationInput | CustomerPayload,
     bearerToken?: string
-  ): Promise<MobileSentrixCustomer> {
-    return this.request<MobileSentrixCustomer>(
+  ): Promise<any> {
+    return this.request<any>(
       '/api/rest/customers',
       'POST',
       customerData,
