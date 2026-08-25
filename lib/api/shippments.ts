@@ -1,4 +1,4 @@
-import { BaseApiClient } from './clients'; // ✅ Pointing to existing file
+import { BaseApiClient } from './client'; // ✅ CORRECT (singular)
 
 export interface Shipment {
   order_id: string;
