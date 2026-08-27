@@ -93,4 +93,4 @@ export function createSentrixClient(): SentrixClient {
   }
 
   return new SentrixApiService();
-}
+} 
