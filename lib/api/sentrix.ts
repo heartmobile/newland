@@ -27,6 +27,7 @@ export interface SentrixClient {
   getProductBySku(sku: string): Promise<SentrixProduct | null>;
   getStock(skus: string[]): Promise<Record<string, number>>;
   getCart(): Promise<SentrixCart>;
+  modifyCartItems(products: any[]): Promise<any>;
 }
 
 export class SentrixApiService implements SentrixClient {
@@ -43,7 +44,10 @@ export class SentrixApiService implements SentrixClient {
   }
 
   async getCart(): Promise<SentrixCart> {
-    // Add your MobileSentrix cart API fetch implementation here
+    throw new Error('MobileSentrix integration remains disabled until the official API documentation is available.');
+  }
+
+  async modifyCartItems(products: any[]): Promise<any> {
     throw new Error('MobileSentrix integration remains disabled until the official API documentation is available.');
   }
 }
