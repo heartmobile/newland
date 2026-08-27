@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { SentrixApiService } from '@/lib/api';
+import { SentrixApiService } from '@/lib/api/sentrix';
 
 // 1. GET: Fetch Active Shopping Cart Details
 export async function GET() {
@@ -14,6 +14,16 @@ export async function GET() {
 }
 
 // 2. POST: Unified Handler for Adding, Updating, and Removing Items
+export async function DELETE() {
+  try {
+    const responseData = await new SentrixApiService().clearCart();
+    return NextResponse.json(responseData, { status: 200 });
+  } catch (error: any) {
+    console.error("Cart DELETE Proxy Error:", error);
+    return NextResponse.json({ error: error.message || 'Internal Server Error clearing cart' }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();

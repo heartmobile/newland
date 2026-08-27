@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { SentrixApiService } from '@/lib/api';
+import { ProductsApiService } from '@/lib/api/products';
 
 export async function GET() {
   try {
-    const api = new SentrixApiService();
+    const api = new ProductsApiService();
     const data = await api.getProducts();
 
     const productsArray = Object.values(data);
@@ -17,3 +17,4 @@ export async function GET() {
     );
   }
 }
+

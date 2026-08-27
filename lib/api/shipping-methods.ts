@@ -1,5 +1,4 @@
-import { BaseApiClient } from './client'; // ✅ CORRECT (singular)
-
+import { BaseApiClient } from './client'; // ✅ Pointing to existing file
 export type RegionCode = 'US' | 'CA' | 'UK' | 'EU';
 
 export interface ShippingMethod {

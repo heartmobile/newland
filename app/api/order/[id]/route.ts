@@ -1,21 +1,19 @@
 import { NextResponse } from 'next/server';
-import { SentrixApiService } from '@/lib/api';
+import { OrdersApiService } from '@/lib/api/orders';
 
-export async function GET(request: Request) {
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const { searchParams } = new URL(request.url);
-    const limit = Number(searchParams.get('limit') || 20);
-    const page = Number(searchParams.get('page') || 1);
+    const { id } = await params;
+    const order = await new OrdersApiService().getOrderById(id);
 
-    const apiService = new SentrixApiService();
-    // Utilizes the paginated engine block method inside your class file
-    const listData = await apiService.getOrdersPaginated(page, limit);
-
-    return NextResponse.json(listData, { status: 200 });
+    return NextResponse.json(order, { status: 200 });
   } catch (error: any) {
-    console.error("Orders List Route Exception:", error);
+    console.error("Order Route Exception:", error);
     return NextResponse.json(
-      { error: error.message || 'Internal Server Error compiling order history logs.' },
+      { error: error.message || 'Internal Server Error retrieving order details.' },
       { status: 500 }
     );
   }
