@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
 import Link from 'next/link';
+import { BrandNavigation } from '@/components/brand-navigation';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <span>Heart <strong>Mobile</strong></span>
             </Link>
             <nav className="main-nav" aria-label="Main navigation">
+              <BrandNavigation />
               <Link href="/phones">Devices</Link>
               <Link href="/parts">Screens</Link>
               <Link href="/delivery">Delivery</Link>
