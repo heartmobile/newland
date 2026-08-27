@@ -11,6 +11,10 @@ export interface MobileSentrixProduct {
   is_in_stock: boolean;
   category_ids: string[];
   image_url?: string;
+  default_image?: string;
+  manufacturer_text?: string;
+  model_text?: string | false;
+  device_model_text?: string;
   description?: string;
   short_description?: string;
   brand?: string;
