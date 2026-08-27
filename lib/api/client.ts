@@ -57,7 +57,7 @@ export class BaseApiClient {
   protected async request<T = unknown>(
     endpoint: string,
     method: string = 'GET',
-    bodyData?: Record<string, unknown>,
+    bodyData?: object,
     queryParams: Record<string, string> = {},
     _bearerToken?: string
   ): Promise<T> {
