@@ -1,10 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { getDisplayPrice, getProductsByCategory } from '@/lib/products';
-import { FEATURED_PHONE_FAMILIES } from '@/lib/phone-families';
 
 export default function HomePage() {
-  const featuredDevices = getProductsByCategory('device').slice(0, 3);
   const featuredScreens = getProductsByCategory('screen').slice(0, 2);
 
   return (
@@ -65,63 +63,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section shell">
-        <div className="featured-heading">
-          <div>
-            <span className="eyebrow">Shop by generation</span>
-            <h2>Find your Galaxy S.</h2>
-          </div>
-          <Link href="/phones">View all devices →</Link>
-        </div>
-        <div className="home-model-grid">
-          {FEATURED_PHONE_FAMILIES.map((family) => (
-            <Link href={`/phones/${family.slug}`} className="home-model-card" key={family.slug}>
-              <Image src={family.heroImage} alt="" width={520} height={520} />
-              <div>
-                <small>{family.year} · Samsung</small>
-                <h3>{family.name}</h3>
-                <span>Standard · Plus · Ultra</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="featured-section">
+      <section className="device-finder-promo">
         <div className="shell">
-          <div className="featured-heading">
-            <div>
-              <span className="eyebrow">Featured preview</span>
-              <h2>Popular devices</h2>
-            </div>
-            <Link href="/phones">View device catalog →</Link>
-          </div>
-          <div className="product-grid">
-            {featuredDevices.map((product) => (
-              <Link
-                href={`/products/${product.id}`}
-                className="product-card product-card-link"
-                key={product.id}
-              >
-                <div className="product-visual"><span className="device-icon" /></div>
-                <div className="product-meta">
-                  <span>{product.brand}</span>
-                  <span>Grade {product.condition}</span>
-                </div>
-                <h3>{product.name}</h3>
-                <p>{product.storage} · Unlocked preview</p>
-                <div className="stock-row">
-                  <strong>CA${getDisplayPrice(product).toFixed(2)}</strong>
-                  <span>{product.stockQuantity} available</span>
-                </div>
-                <span className="card-action">View device details →</span>
-              </Link>
-            ))}
-          </div>
-          <p className="preview-disclaimer">
-            Preview inventory and estimated pricing. Live supplier quantities will replace these
-            samples when the MobileSentrix API is connected.
-          </p>
+          <span className="eyebrow">Live availability</span>
+          <h2>Search every available device.</h2>
+          <p>Find current iPhone and Samsung Galaxy inventory by model, then choose the storage, colour, carrier, and condition that fit.</p>
+          <Link href="/phones" className="button">Open device finder</Link>
         </div>
       </section>
 
