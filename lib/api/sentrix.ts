@@ -1,10 +1,29 @@
 export interface CustomerRegistrationInput {
+  firstname: string;
+  lastname: string;
+  username: string;
+  account_type?: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  companyName?: string;
-  phone?: string;
+  mobile: string;
+  pre_mobile?: number;
+  prefix_main_country_id?: string;
+  password?: string;
+  company_short?: string;
+  company?: string;
+  company_website?: string;
+  street: string[];
+  city: string;
+  region: string;
+  postcode: string;
+  country_id?: string;
+  telephone?: string;
+  pre_address_mobile?: number;
+  prefix_country_id?: string;
+  vat_numbers?: string[];
+  user_code?: string;
+  describes_business?: string;
 }
+
 export interface SentrixProduct {
   id: string;
   sku: string;
