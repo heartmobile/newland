@@ -42,6 +42,38 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* --- SIDE-BY-SIDE PROMO BANNERS --- */}
+      <section className="w-full max-w-7xl mx-auto px-4 my-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center justify-center">
+          
+          {/* Banner 1: Orange iPhone Ad */}
+          <div className="flex justify-center w-full">
+            <Image 
+              src="/hm ad orange.png" 
+              alt="Heart Mobile iPhone 17 Pro Max Promo" 
+              width={600} 
+              height={750} 
+              className="rounded-2xl shadow-xl w-full h-auto object-cover max-w-[500px]"
+              priority
+            />
+          </div>
+
+          {/* Banner 2: Galaxy Screen Ad */}
+          <div className="flex justify-center w-full">
+            <Image 
+              src="/s25 screen.png" 
+              alt="Heart Mobile Screen Replacement Promo" 
+              width={600} 
+              height={750} 
+              className="rounded-2xl shadow-xl w-full h-auto object-cover max-w-[500px]"
+              priority
+            />
+          </div>
+
+        </div>
+      </section>
+      {/* --------------------------------- */}
+
       <section className="section shell">
         <div className="section-heading">
           <span className="eyebrow">Shop your way</span>
