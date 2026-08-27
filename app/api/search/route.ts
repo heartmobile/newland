@@ -1,12 +1,7 @@
 // app/api/search/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
-// 1. Core integration environment variables
-const BASE_URL = process.env.MOBILESENTRIX_BASE_URL || 'https://mobilesentrix.com';
-const CONSUMER_KEY = process.env.MOBILESENTRIX_CONSUMER_KEY || '';
-const CONSUMER_SECRET = process.env.MOBILESENTRIX_CONSUMER_SECRET || '';
-const ACCESS_TOKEN = process.env.MOBILESENTRIX_ACCESS_TOKEN || '';
-const ACCESS_TOKEN_SECRET = process.env.MOBILESENTRIX_ACCESS_TOKEN_SECRET || '';
+import { ProductsApiService } from '@/lib/api/products';
 
 /**
  * DYNAMIC CLEANING ENGINE:
@@ -81,31 +76,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // 2. Formulate production URL paths matching your inventory API documentation
-    const liveApiUrl = `${BASE_URL}/api/rest/products?limit=15&page=1&pageinfo=1&search=${encodeURIComponent(query)}`;
-
-    // 3. Mount pre-requirement credentials to authenticate the inbound request stream
-    const mobileSentrixResponse = await fetch(liveApiUrl, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        // Pass validation security credentials cleanly on every request cycle
-        'X-Consumer-Key': CONSUMER_KEY,
-        'X-Consumer-Secret': CONSUMER_SECRET,
-        'X-Access-Token': ACCESS_TOKEN,
-        'X-Access-Token-Secret': ACCESS_TOKEN_SECRET,
-      },
-      next: { revalidate: 30 } 
+    // Sign the supplier request with OAuth 1.0 using server-only environment variables.
+    const productsArray = await new ProductsApiService().getProducts({
+      limit: '15',
+      page: '1',
+      search: query,
     });
-
-    if (!mobileSentrixResponse.ok) {
-      throw new Error(`MobileSentrix server responded with code: ${mobileSentrixResponse.status}`);
-    }
-
-    const rawData = await mobileSentrixResponse.json()            
-    // Support object dictionaries and indexed lists uniformly
-    const productsArray = Array.isArray(rawData) ? rawData : Object.values(rawData);
 
     // 4. Concurrently pull Wikipedia images for all filtered results in parallel
     const integratedResults = await Promise.all(

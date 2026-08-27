@@ -1,4 +1,4 @@
-import { BaseApiClient } from './clients'; // ✅ Pointing to existing file
+import { BaseApiClient } from './client'; // ✅ Pointing to existing file
 
 export type BrokenScreensOrderType = 'rma' | 'dv_rma' | 'consignmentonerma' | 'core';
 
