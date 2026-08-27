@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { SentrixApiService, CustomerRegistrationInput } from '@/lib/api';
+import { SentrixApiService, CustomerRegistrationInput } from '@/lib/api/sentrix';
 
 export async function POST(request: Request) {
   try {
