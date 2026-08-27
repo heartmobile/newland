@@ -7,3 +7,4 @@ export * from './brokenscreens';
 export * from './cutofftimes';
 export * from './shipping-methods';
 export * from './client';
+export * from './sentrix';
