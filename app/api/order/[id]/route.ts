@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { SentrixApiService } from '@/lib/api';
+import { OrdersApiService } from '@/lib/api/orders';
 
 export async function GET(request: Request) {
   try {
@@ -7,9 +7,11 @@ export async function GET(request: Request) {
     const limit = Number(searchParams.get('limit') || 20);
     const page = Number(searchParams.get('page') || 1);
 
-    const apiService = new SentrixApiService();
-    // Utilizes the paginated engine block method inside your class file
-    const listData = await apiService.getOrdersPaginated(page, limit);
+    const apiService = new OrdersApiService();
+    const listData = await apiService.getOrders({
+      page: String(page),
+      limit: String(limit),
+    });
 
     return NextResponse.json(listData, { status: 200 });
   } catch (error: any) {
