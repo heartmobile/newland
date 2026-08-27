@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { SentrixApiService } from '@/lib/api/sentrix';
-// If OrderInput is defined in sentrix.ts, include it here:
-// import { SentrixApiService, OrderInput } from '@/lib/api/sentrix';
+import {
+  SentrixApiService,
+  type CustomerRegistrationInput,
+} from '@/lib/api/sentrix';
 
 export async function POST(request: Request) {
   try {
