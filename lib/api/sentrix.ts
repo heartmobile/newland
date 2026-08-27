@@ -1,96 +1,86 @@
+import { BaseApiClient } from './client';
+
+export interface VatNumber {
+  vat_prefix: string;
+  vat_number: string;
+}
+
 export interface CustomerRegistrationInput {
+  customrest: 1;
   firstname: string;
   lastname: string;
   username: string;
-  account_type?: string;
+  account_type?: 'personal' | 'business';
   email: string;
   mobile: string;
-  pre_mobile?: number;
-  prefix_main_country_id?: string;
-  password?: string;
-  company_short?: string;
-  company?: string;
+  pre_mobile: number;
+  prefix_main_country_id: string;
+  password: string;
+  company_short: string;
+  company: string;
   company_website?: string;
-  street: string[];
+  street: [string, string?];
   city: string;
   region: string;
   postcode: string;
-  country_id?: string;
-  telephone?: string;
-  pre_address_mobile?: number;
-  prefix_country_id?: string;
-  vat_numbers?: string[];
+  country_id: string;
+  telephone: string;
+  prefix: string;
+  prefix_country_id: string;
+  vat_numbers?: VatNumber[];
   user_code?: string;
   describes_business?: string;
 }
 
-export interface SentrixProduct {
-  id: string;
-  sku: string;
-  title: string;
-  category: string;
-  compatibility: string;
-  wholesalePrice: number;
-  stockQuantity: number;
-  inStock: boolean;
+export interface CartProductInput {
+  sku?: string;
+  entity_id?: string;
+  qty: number;
+  update?: 1;
 }
 
-export interface SentrixCartItem {
-  sku: string;
-  quantity: number;
-  price: number;
-  title: string;
+export interface OrderInput {
+  customrest: 1;
+  quote_id: string;
+  billing_id: string;
+  shipping_id: string;
+  shipping_method: string;
+  payment_method: 'mygateway';
+  po_number?: string;
 }
 
-export interface SentrixCart {
-  items: SentrixCartItem[];
-  subtotal: number;
-  total: number;
-}
-
-export interface SentrixClient {
-  listProducts(): Promise<SentrixProduct[]>;
-  getProductBySku(sku: string): Promise<SentrixProduct | null>;
-  getStock(skus: string[]): Promise<Record<string, number>>;
-  getCart(): Promise<SentrixCart>;
-  modifyCartItems(products: any[]): Promise<any>;
-  createCustomer(input: CustomerRegistrationInput): Promise<any>;
-}
-
-export class SentrixApiService implements SentrixClient {
-  async listProducts(): Promise<SentrixProduct[]> {
-    throw new Error('Not implemented');
+export class SentrixApiService extends BaseApiClient {
+  async getCart(): Promise<unknown> {
+    return this.request('/api/rest/cart', 'GET');
   }
 
-  async getProductBySku(sku: string): Promise<SentrixProduct | null> {
-    throw new Error('Not implemented');
+  async modifyCartItems(products: CartProductInput[]): Promise<unknown> {
+    return this.request('/api/rest/cart', 'POST', { customrest: 1, products });
   }
 
-  async getStock(skus: string[]): Promise<Record<string, number>> {
-    throw new Error('Not implemented');
+  async clearCart(): Promise<unknown> {
+    return this.request('/api/rest/cart', 'DELETE', { customrest: 1 });
   }
 
-  async getCart(): Promise<SentrixCart> {
-    throw new Error('MobileSentrix integration remains disabled until the official API documentation is available.');
+  async createCustomer(input: CustomerRegistrationInput): Promise<{ success: boolean; message: string }> {
+    return this.request('/api/rest/createcustomer', 'POST', input);
   }
 
-  async modifyCartItems(products: any[]): Promise<any> {
-    throw new Error('MobileSentrix integration remains disabled until the official API documentation is available.');
-  }
-
-  async createCustomer(input: CustomerRegistrationInput): Promise<any> {
-    throw new Error('MobileSentrix integration remains disabled until the official API documentation is available.');
+  async createOrder(input: OrderInput): Promise<{ status: number; increment_id: string; order_id: string }> {
+    return this.request('/api/rest/createorder', 'POST', input);
   }
 }
 
 export function isSentrixConfigured(): boolean {
-  return Boolean(process.env.SENTRIX_API_URL && process.env.SENTRIX_API_KEY);
+  return Boolean(
+    process.env.MOBILESENTRIX_API_URL &&
+      process.env.MOBILESENTRIX_CONSUMER_KEY &&
+      process.env.MOBILESENTRIX_CONSUMER_SECRET &&
+      process.env.MOBILESENTRIX_ACCESS_TOKEN &&
+      process.env.MOBILESENTRIX_ACCESS_TOKEN_SECRET
+  );
 }
 
-export function createSentrixClient(): SentrixClient {
-  if (!isSentrixConfigured()) {
-    throw new Error('MobileSentrix API credentials are not configured.');
-  }
-
+export function createSentrixClient(): SentrixApiService {
   return new SentrixApiService();
-} 
+}

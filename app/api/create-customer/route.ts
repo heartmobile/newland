@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { SentrixApiService } from '@/lib/api/sentrix';
-// If OrderInput is defined in sentrix.ts, include it here:
-// import { SentrixApiService, OrderInput } from '@/lib/api/sentrix';
+import {
+  SentrixApiService,
+  type CustomerRegistrationInput,
+} from '@/lib/api/sentrix';
 
 export async function POST(request: Request) {
   try {
@@ -14,6 +15,7 @@ export async function POST(request: Request) {
 
     // Map and enforce required registration fields explicitly from your API specification sheet
     const registrationPayload: CustomerRegistrationInput = {
+      customrest: 1,
       firstname: body.firstname,
       lastname: body.lastname,
       username: body.username,
@@ -32,7 +34,7 @@ export async function POST(request: Request) {
       postcode: body.postcode,
       country_id: body.country_id || 'US',
       telephone: body.telephone,
-      pre_address_mobile: Number(body.pre_address_mobile || 1),
+      prefix: String(body.prefix || body.pre_address_mobile || 1),
       prefix_country_id: body.prefix_country_id || 'US',
       vat_numbers: body.vat_numbers || [],
       user_code: body.user_code || '',
