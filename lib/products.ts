@@ -182,6 +182,5 @@ export function getDisplayPrice(product: Product): number {
     releaseYear: product.releaseYear,
     brand: product.brand,
     condition: product.condition,
-    marketCeiling: product.marketCeiling,
   }).price;
 }
