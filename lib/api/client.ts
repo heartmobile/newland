@@ -1,5 +1,11 @@
 import * as crypto from 'crypto';
 
+function oauthEncode(value: string): string {
+  return encodeURIComponent(value).replace(/[!'()*]/g, (character) =>
+    `%${character.charCodeAt(0).toString(16).toUpperCase()}`
+  );
+}
+
 export interface ApiClientConfig {
   baseUrl?: string;
   consumerKey?: string;
@@ -21,20 +27,18 @@ function generateOAuth1Signature(
   // Create parameter string (sorted)
   const sortedParams = Object.keys(params)
     .sort()
-    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+    .map((key) => `${oauthEncode(key)}=${oauthEncode(params[key])}`)
     .join('&');
 
   // Base string for signature
   const baseString = [
     method.toUpperCase(),
-    encodeURIComponent(url),
-    encodeURIComponent(sortedParams),
+    oauthEncode(url),
+    oauthEncode(sortedParams),
   ].join('&');
 
   // Signing key
-  const signingKey = `${encodeURIComponent(consumerSecret)}&${encodeURIComponent(
-    accessTokenSecret
-  )}`;
+  const signingKey = `${oauthEncode(consumerSecret)}&${oauthEncode(accessTokenSecret)}`;
 
   // HMAC-SHA1 signature
   const signature = crypto
@@ -51,7 +55,7 @@ function generateOAuth1Signature(
 function generateOAuth1Header(
   method: string,
   url: string,
-  bodyParams: Record<string, any>,
+  bodyParams: Record<string, string>,
   consumerKey: string,
   consumerSecret: string,
   accessToken: string,
@@ -80,7 +84,7 @@ function generateOAuth1Header(
   // Build Authorization header
   oauthParams.oauth_signature = signature;
   const authHeader = Object.entries(oauthParams)
-    .map(([key, value]) => `${key}="${encodeURIComponent(value)}"`)
+    .map(([key, value]) => `${oauthEncode(key)}="${oauthEncode(value)}"`)
     .join(', ');
 
   return `OAuth ${authHeader}`;
@@ -108,18 +112,25 @@ export class BaseApiClient {
   protected async request<T = any>(
     endpoint: string,
     method: string = 'GET',
-    bodyData?: Record<string, any>
+    bodyData?: Record<string, unknown>,
+    queryParams: Record<string, string> = {},
+    _bearerToken?: string
   ): Promise<T> {
-    const url = `${this.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
-    
-    // Prepare body
+    const baseUrl = `${this.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    const query = Object.entries(queryParams)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, value]) => `${oauthEncode(key)}=${oauthEncode(value)}`)
+      .join('&');
+    const url = query ? `${baseUrl}?${query}` : baseUrl;
+
+    // JSON bodies are not OAuth 1.0 signature parameters; query parameters are.
     const body = bodyData ? JSON.stringify(bodyData) : undefined;
     
     // Generate OAuth 1.0 header
     const authHeader = generateOAuth1Header(
       method,
-      url,
-      bodyData || {},
+      baseUrl,
+      queryParams,
       this.consumerKey,
       this.consumerSecret,
       this.accessToken,

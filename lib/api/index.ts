@@ -6,4 +6,4 @@ export * from './splitshippments';
 export * from './brokenscreens';
 export * from './cutofftimes';
 export * from './shipping-methods';
-export * from './clients';
+export * from './client';
