@@ -1,3 +1,10 @@
+export interface CustomerRegistrationInput {
+  email: string;
+  firstName: string;
+  lastName: string;
+  companyName?: string;
+  phone?: string;
+}
 export interface SentrixProduct {
   id: string;
   sku: string;
