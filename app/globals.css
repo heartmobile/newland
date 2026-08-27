@@ -29,6 +29,19 @@ main { min-height: 60vh; }
 .brand-mark { width: 32px; height: 32px; display: inline-grid; place-items: center; border-radius: 50%; color: white; background: var(--heart); font-size: 20px; }
 .main-nav { display: flex; align-items: center; gap: 28px; color: #f1f1f1; font-size: 14px; font-weight: 650; }
 .main-nav a:hover, .footer-links a:hover { color: var(--heart); }
+.brand-menu { position: relative; }
+.brand-menu > summary { display: flex; align-items: center; gap: 5px; cursor: pointer; list-style: none; }
+.brand-menu > summary::-webkit-details-marker { display: none; }
+.brand-menu > summary::after { content: '⌄'; color: #aeb9b6; font-size: 13px; transition: transform .2s; }
+.brand-menu[open] > summary::after { transform: rotate(180deg); }
+.brand-menu-panel { position: absolute; top: calc(100% + 21px); left: -18px; width: min(720px, calc(100vw - 32px)); padding: 20px; border: 1px solid #303b3d; border-radius: 14px; background: #fff; color: var(--ink); box-shadow: 0 20px 44px rgb(0 0 0 / 28%); }
+.brand-menu-title { display: block; margin-bottom: 14px; color: var(--heart); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.brand-menu-families { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px 28px; }
+.brand-menu-families h2 { margin: 0 0 8px; font-size: 13px; }
+.brand-menu-families ul { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.brand-menu-families a { color: #52605d; font-size: 12px; font-weight: 550; }
+.brand-menu-families a:hover, .brand-menu-families a:focus { color: var(--heart); }
+.brand-menu:has(.brand-menu-panel) { z-index: 1; }
 .button { display: inline-flex; justify-content: center; align-items: center; min-height: 46px; padding: 0 22px; border-radius: 9px; background: var(--heart); color: white; font-size: 14px; font-weight: 750; transition: transform .2s, background .2s; }
 .button:hover { transform: translateY(-1px); background: #b90f42; }
 .button-small { min-height: 38px; padding-inline: 17px; }

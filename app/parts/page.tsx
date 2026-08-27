@@ -1,61 +1,40 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-export default function OrderHistoryDashboard() {
-  const [ordersList, setOrdersList] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function PartsPage() {
+  const [selection, setSelection] = useState<{ brand: string; model: string } | null>(null);
 
   useEffect(() => {
-    async function loadUserOrders() {
-      try {
-        // 1. Fetch data from your custom proxy router /api/orders
-        const response = await fetch('/api/orders?limit=20&page=1');
-        const rawData = await response.json(); 
-
-        // 2. Flatten the response schema dictionary out for clean client mapping loops
-        const flattenedList = Object.entries(rawData).map(([id, details]) => ({
-          id,
-          ...(details as any)
-        }));
-
-        // 3. Save the clean list to your component state
-        setOrdersList(flattenedList);
-      } catch (error) {
-        console.error("Failed to parse backend order dictionary map:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadUserOrders();
+    const params = new URLSearchParams(window.location.search);
+    const brand = params.get('brand');
+    const model = params.get('model');
+    if (brand && model) setSelection({ brand, model });
   }, []);
 
-  if (loading) return <p style={{ padding: '2rem' }}>Syncing order history logs...</p>;
-
   return (
-    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>Your Sales Orders Ledger</h1>
-      
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem' }}>
-        {ordersList.map((order) => (
-          // 4. Now you can easily render <OrderCard key={order.id} item={order} />
-          <div 
-            key={order.id} 
-            style={{ padding: '1rem', border: '1px solid #e4e4e7', borderRadius: '8px', background: '#fff' }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span style={{ fontWeight: 'bold', color: '#0070f3' }}>Order #{order.increment_id}</span>
-              <span style={{ fontSize: '0.85rem', color: '#71717a' }}>{order.created_at}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
-              <span>Status: <strong style={{ color: '#166534' }}>{order.status}</strong></span>
-              <span>Total: <strong>${Number(order.grand_total).toFixed(2)} {order.store_currency_code}</strong></span>
-            </div>
-          </div>
-        ))}
-
-        {ordersList.length === 0 && <p>No structural order history found.</p>}
+    <div className="page">
+      <div className="shell narrow">
+        <nav className="breadcrumbs" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span>/</span>
+          <span>Replacement screens</span>
+          {selection && <><span>/</span><span>{selection.model}</span></>}
+        </nav>
+        <header className="page-heading">
+          <span className="eyebrow">Replacement screens</span>
+          <h1>{selection ? `${selection.model} screens` : 'Find a replacement screen.'}</h1>
+          <p>
+            {selection
+              ? `Available ${selection.brand} ${selection.model} replacement screens will appear here as supplier inventory is connected.`
+              : 'Choose Apple, Samsung, or Google from the navigation to select a phone model.'}
+          </p>
+        </header>
+        <div className="catalog-note">
+          Live supplier inventory is being connected. Check back soon for compatible screen options and pricing.
+        </div>
+        <Link href="/" className="text-link">Choose another model</Link>
       </div>
     </div>
   );
