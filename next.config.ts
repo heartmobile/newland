@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      // 1. Global Security Headers (Applies to all pages)
       {
         source: '/:path*',
         headers: [
@@ -23,11 +24,20 @@ const nextConfig: NextConfig = {
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
       },
+      // 2. Admin Route Protections
       {
         source: '/admin/:path*',
         headers: [
           { key: 'Cache-Control', value: 'private, no-store, max-age=0' },
           { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
+        ],
+      },
+      // 3. API Route Protections (Moved to its own distinct block)
+      {
+        source: '/api/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'no-store, max-age=0, must-revalidate' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
         ],
       },
     ];
