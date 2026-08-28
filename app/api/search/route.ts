@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
         const modelName = product.device_model_text || product.model_text || product.name;
 
         // Check native images first; if missing, fall back to the Wikipedia scraper engine
-        let displayImage = product.image_url || product.default_image;
+       let displayImage: string | null = product.image_url || product.default_image || null;
         if (!displayImage) {
           displayImage = await fetchWikipediaDeviceImage(brandName, modelName);
         }
