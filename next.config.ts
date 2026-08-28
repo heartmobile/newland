@@ -10,13 +10,13 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
-      // 1. Global Security Headers (Applies to all pages)
+      // 1. Global Security Headers (Updated for Mobilesentrix API)
       {
         source: '/:path*',
         headers: [
           { 
             key: 'Content-Security-Policy', 
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.mobilesentrix.com https://*.mobilesentrix.ca https://*.wikipedia.org; font-src 'self' data: https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests" 
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://googleapis.com; img-src 'self' data: https://*.mobilesentrix.com https://*.mobilesentrix.ca https://*.wikipedia.org; font-src 'self' data: https://gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' https://*.mobilesentrix.com https://preprod.mobilesentrix.com; connect-src 'self' https://*.mobilesentrix.com https://preprod.mobilesentrix.com; frame-ancestors 'none'; upgrade-insecure-requests" 
           },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -32,7 +32,7 @@ const nextConfig: NextConfig = {
           { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
         ],
       },
-      // 3. API Route Protections (Moved to its own distinct block)
+      // 3. API Route Protections
       {
         source: '/api/:path*',
         headers: [
