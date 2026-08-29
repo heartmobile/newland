@@ -97,9 +97,9 @@ export default function HomePage() {
 
       <section className="device-finder-promo">
         <div className="shell">
-          <span className="eyebrow">Live availability</span>
-          <h2>Search every available device.</h2>
-          <p>Find current iPhone and Samsung Galaxy inventory by model, then choose the storage, colour, carrier, and condition that fit.</p>
+          <span className="eyebrow">Device index experiment</span>
+          <h2>Search available device configurations.</h2>
+          <p>Explore a supplied inventory snapshot by model, storage, colour, carrier, and condition without displaying stock totals.</p>
           <Link href="/phones" className="button">Open device finder</Link>
         </div>
       </section>

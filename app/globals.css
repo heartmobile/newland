@@ -345,12 +345,19 @@ h1, h2, h3, p { margin-top: 0; }
 .device-search > div { display: flex; gap: 10px; }
 .device-search input { min-width: 0; flex: 1; min-height: 48px; padding: 0 15px; border: 1px solid #cbd5d0; border-radius: 9px; color: var(--ink); font: inherit; }
 .device-search input:focus { outline: 3px solid rgb(224 52 61 / 18%); border-color: var(--heart); }
+.device-index-note { display: block; margin-top: 11px; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .device-results { min-height: 270px; padding: 40px 0 54px; }
 .device-results > p { margin: 0; color: var(--muted); text-align: center; }
-.device-result-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.device-result-list { display: grid; gap: 18px; }
 .device-result { padding: 22px; border: 1px solid var(--line); border-radius: 15px; background: white; }
 .device-result > span { color: var(--heart); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .device-result h2 { margin: 7px 0; font-size: 21px; letter-spacing: -.025em; }
-.device-result p { margin: 0 0 10px; font-weight: 800; }
-.device-result small { color: var(--muted); font-size: 11px; line-height: 1.45; }
-@media (max-width: 640px) { .device-search > div { flex-direction: column; } .device-result-grid { grid-template-columns: 1fr; } .device-results { min-height: 220px; } }
+.device-storage-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 18px; }
+.device-storage { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #f8faf9; }
+.device-storage h3 { margin: 0 0 12px; font-size: 16px; }
+.device-condition-list { display: grid; gap: 12px; }
+.device-condition { display: grid; gap: 7px; }
+.device-condition > strong { font-size: 12px; }
+.device-color-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.device-color { padding: 6px 9px; border: 1px solid #d5ddd9; border-radius: 999px; background: white; color: var(--muted); font-size: 11px; }
+@media (max-width: 640px) { .device-search > div { flex-direction: column; } .device-results { min-height: 220px; } }
