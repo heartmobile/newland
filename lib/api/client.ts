@@ -14,6 +14,27 @@ export interface ApiClientConfig {
   accessTokenSecret?: string;
 }
 
+const REQUEST_TIMEOUT_MS = 10_000;
+
+export class SupplierApiError extends Error {
+  constructor(public readonly status: number) {
+    super('The supplier API request failed.');
+    this.name = 'SupplierApiError';
+  }
+}
+
+function validateBaseUrl(value: string): string {
+  const url = new URL(value);
+  const allowedHost = url.hostname === 'mobilesentrix.com'
+    || url.hostname.endsWith('.mobilesentrix.com')
+    || url.hostname === 'mobilesentrix.ca'
+    || url.hostname.endsWith('.mobilesentrix.ca');
+  if (url.protocol !== 'https:' || !allowedHost || url.username || url.password || url.search || url.hash) {
+    throw new Error('MOBILESENTRIX_API_URL must be an HTTPS MobileSentrix origin.');
+  }
+  return url.origin;
+}
+
 function generateOAuth1Header(
   consumerKey: string,
   consumerSecret: string,
@@ -43,7 +64,7 @@ export class BaseApiClient {
   protected accessTokenSecret: string;
 
   constructor(config?: ApiClientConfig) {
-    this.baseUrl = (config?.baseUrl || process.env.MOBILESENTRIX_API_URL || 'https://www.mobilesentrix.com').replace(/\/$/, '');
+    this.baseUrl = validateBaseUrl(config?.baseUrl || process.env.MOBILESENTRIX_API_URL || 'https://www.mobilesentrix.com');
     this.consumerKey = config?.consumerKey || process.env.MOBILESENTRIX_CONSUMER_KEY || '';
     this.consumerSecret = config?.consumerSecret || process.env.MOBILESENTRIX_CONSUMER_SECRET || '';
     this.accessToken = config?.accessToken || process.env.MOBILESENTRIX_ACCESS_TOKEN || '';
@@ -77,13 +98,17 @@ export class BaseApiClient {
         ),
       },
       ...(bodyData ? { body: JSON.stringify(bodyData) } : {}),
+      cache: 'no-store',
+      redirect: 'error',
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`MobileSentrix API Error (${response.status}): ${errorText || response.statusText}`);
+      throw new SupplierApiError(response.status);
     }
 
+    const contentType = response.headers.get('content-type')?.toLowerCase() || '';
+    if (!contentType.includes('application/json')) throw new SupplierApiError(502);
     return response.json() as Promise<T>;
   }
 }

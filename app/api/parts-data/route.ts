@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import { ProductsApiService } from '@/lib/api/products';
 import { calculateRetailPrice, getReleaseYear } from '@/lib/pricing';
+import { requireSupplierAccess } from '@/lib/security/supplier-api';
 
-export async function GET() {
+export async function GET(request: Request) {
+  const denied = requireSupplierAccess(request, 'read');
+  if (denied) return denied;
   try {
     const products = await new ProductsApiService().getProducts();
     const parts = products.flatMap((product) => {

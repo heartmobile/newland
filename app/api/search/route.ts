@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ProductsApiService } from '@/lib/api/products';
 import { calculateRetailPrice, getReleaseYear } from '@/lib/pricing';
+import { requireSupplierAccess } from '@/lib/security/supplier-api';
 
 function getBrand(product: { manufacturer_text?: string; name: string }): 'Apple' | 'Samsung' | 'Google' | 'Other' {
   const brand = product.manufacturer_text || product.name;
@@ -75,9 +76,12 @@ async function fetchWikipediaDeviceImage(brand: string, model: string): Promise<
 }
 
 export async function GET(request: NextRequest) {
+  const denied = requireSupplierAccess(request, 'read');
+  if (denied) return denied;
   const query = request.nextUrl.searchParams.get('q')?.trim() || '';
 
   if (!query) return NextResponse.json([]);
+  if (query.length > 100) return NextResponse.json({ error: 'Search query is too long.' }, { status: 400 });
 
   try {
     // 1. Fetch products using your service layer

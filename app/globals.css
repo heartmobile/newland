@@ -272,23 +272,6 @@ h1, h2, h3, p { margin-top: 0; }
 .info-grid p, .policy p { margin: 0; color: var(--muted); line-height: 1.65; }
 .info-grid a, .policy a { color: var(--heart); font-weight: 650; }
 .policy { display: grid; gap: 16px; }
-.admin-page { min-height: 70vh; }
-.admin-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
-.admin-stats article { padding: 24px; border: 1px solid var(--line); border-radius: 16px; background: white; }
-.admin-stats span, .admin-stats strong { display: block; }
-.admin-stats span { margin-bottom: 12px; color: var(--muted); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
-.admin-stats strong { font-size: 28px; letter-spacing: -.03em; }
-.admin-panel { padding: 28px; border: 1px solid var(--line); border-radius: 18px; background: white; }
-.admin-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 22px; }
-.admin-panel-heading .eyebrow { margin-bottom: 8px; }
-.admin-panel-heading h2 { margin-bottom: 0; }
-.admin-badge { padding: 7px 11px; border-radius: 99px; background: #fae8ee; color: var(--heart); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
-.admin-table-wrap { overflow-x: auto; }
-.admin-table { width: 100%; border-collapse: collapse; text-align: left; }
-.admin-table th, .admin-table td { padding: 15px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
-.admin-table th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
-.admin-table td { font-size: 13px; }
-.admin-table tbody tr:last-child td { border-bottom: 0; }
 .site-footer { padding: 58px 0 22px; background: var(--ink); color: #dce3e1; }
 .footer-grid { display: flex; justify-content: space-between; gap: 60px; }
 .brand-footer { color: white; }
@@ -316,7 +299,6 @@ h1, h2, h3, p { margin-top: 0; }
   .model-availability { align-items: flex-start; flex-direction: column; }
   .product-detail { grid-template-columns: 1fr; gap: 38px; }
   .detail-visual { position: relative; top: auto; min-height: 520px; }
-  .admin-stats { grid-template-columns: 1fr 1fr; }
   .featured-section .product-grid > :last-child { display: none; }
   .repair-content, .footer-grid, .copyright { align-items: flex-start; flex-direction: column; }
   .payment-methods { align-items: flex-start; flex-direction: column; }
@@ -337,8 +319,7 @@ h1, h2, h3, p { margin-top: 0; }
   .family-phone { width: 112px; height: 230px; }
   .listing-heading { align-items: flex-start; flex-direction: column; }
   .guide-number { margin-bottom: 28px; }
-  .product-grid, .info-grid, .admin-stats, .detail-support, .family-card-grid, .home-model-grid, .variant-grid, .model-family-links { grid-template-columns: 1fr; }
-  .admin-panel { padding: 20px 14px; }
+  .product-grid, .info-grid, .detail-support, .family-card-grid, .home-model-grid, .variant-grid, .model-family-links { grid-template-columns: 1fr; }
   .featured-heading { align-items: flex-start; flex-direction: column; }
   .featured-section .product-grid > :last-child { display: block; }
   .screen-row { grid-template-columns: 60px 1fr; padding: 16px; }

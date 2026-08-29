@@ -24,15 +24,7 @@ const nextConfig: NextConfig = {
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
       },
-      // 2. Admin Route Protections
-      {
-        source: '/admin/:path*',
-        headers: [
-          { key: 'Cache-Control', value: 'private, no-store, max-age=0' },
-          { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
-        ],
-      },
-      // 3. API Route Protections (Ensures backend operations don't leak cache data)
+      // API Route Protections (Ensures backend operations don't leak cache data)
       {
         source: '/api/:path*',
         headers: [
