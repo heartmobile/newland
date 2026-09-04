@@ -32,6 +32,7 @@ function safeEqual(left: string, right: string): boolean {
 
 export function oauthBootstrapEnabled(): boolean {
   return (
+    process.env.VERCEL_ENV === 'preview' &&
     process.env.MOBILESENTRIX_OAUTH_BOOTSTRAP_ENABLED === 'true'
   );
 }
