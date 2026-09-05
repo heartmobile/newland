@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { BrandNavigation } from '@/components/brand-navigation';
 import './globals.css';
+import './device-cards.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
