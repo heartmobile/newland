@@ -1,31 +1,13 @@
 export default function WarrantyPage() {
-  return (
-    <div className="page">
-      <div className="shell narrow">
-        <header className="page-heading">
-          <span className="eyebrow">Buy with confidence</span>
-          <h1>Warranty protection</h1>
-          <p>Exact coverage will be displayed on every product before checkout.</p>
-        </header>
-        <div className="policy">
-          <section>
-            <h2>Clear coverage</h2>
-            <p>Coverage periods and eligible defects vary by product and appear directly on each listing.</p>
-          </section>
-          <section>
-            <h2>Keep your order details</h2>
-            <p>A claim requires the order number, a description of the issue, and clear photos when requested.</p>
-          </section>
-          <section>
-            <h2>Installation matters</h2>
-            <p>Damage caused by incorrect screen installation is not a manufacturing defect. Professional installation is recommended.</p>
-          </section>
-          <section>
-            <h2>Contact us</h2>
-            <p>For product help, email <a href="mailto:john@heartmobile.ca">john@heartmobile.ca</a>.</p>
-          </section>
-        </div>
-      </div>
+  return <div className="page"><div className="shell narrow">
+    <header className="page-heading"><span className="eyebrow">Buy with confidence</span><h1>Heart Mobile Limited Warranty</h1><p>Coverage for eligible product failures during normal and intended use.</p></header>
+    <div className="policy">
+      <section><h2>Mobile Devices — 60-Day Limited Warranty</h2><p>Mobile devices are covered for 60 days from delivery for defects or failures that occur naturally during normal use. Coverage does not include drops, impacts, crushing, water or liquid exposure, misuse, abuse, improper handling, unauthorized modification or repair, improper charging equipment, loss, theft, or cosmetic damage that does not affect normal operation.</p></section>
+      <section><h2>Repair Parts — Lifetime Limited Warranty</h2><p>Except for batteries and specifically excluded products, eligible repair parts are covered by a limited lifetime warranty against defects or failures occurring during normal use. The warranty covers the part itself and does not cover damage caused during installation, removal, or subsequent mishandling.</p><p>Installation damage, improper installation, torn or bent components, damage from excessive force or improper tools, liquid damage, misuse, and damage caused by another defective component are excluded. Professional installation is recommended.</p></section>
+      <section><h2>Batteries — 90-Day Limited Warranty</h2><p>Batteries are not covered by the lifetime parts warranty. Eligible batteries are covered for 90 days from delivery for defects or abnormal failures during normal intended use. Damage from improper installation, puncture, bending, crushing, liquid exposure, excessive heat, misuse, improper charging, or other external causes is excluded. Normal deterioration in battery capacity through use and age is not considered a defect.</p></section>
+      <section><h2>Warranty Claims</h2><p>Customers may be asked for their order information, a description of the failure, photographs, and return of the product for inspection. If an eligible product has a covered failure during the applicable warranty period, Heart Mobile may, subject to applicable law, repair it, replace it, or provide another appropriate remedy.</p></section>
+      <section><h2>Statutory Consumer Rights</h2><p>This limited warranty is provided in addition to rights and remedies available under applicable consumer protection laws. Nothing in this policy excludes or restricts rights that cannot lawfully be excluded or restricted.</p></section>
+      <section><h2>Contact</h2><p>Email <a href="mailto:john@heartmobile.ca">john@heartmobile.ca</a> or call <a href="tel:+14374348683">437-434-8683</a>.</p></section>
     </div>
-  );
+  </div></div>;
 }
