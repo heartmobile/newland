@@ -15,7 +15,15 @@ function uniqueGrades(storageOptions: StorageGroup[]) { return Array.from(new Se
 function deviceArtwork(result: SearchResult) {
   const make = result.make.toLowerCase();
   const model = result.model.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-  if ((make.includes('apple') || model.includes('iphone')) && /^iphone 13$/.test(model)) return '/devices/iphone-13.png';
+
+  if ((make.includes('apple') || model.includes('iphone')) && /^iphone 13(?:\s|$)/.test(model)) return '/devices/iphone-13.png';
+
+  if (make.includes('samsung') || model.includes('galaxy')) {
+    if (/^galaxy s23(?:\s|$)/.test(model)) return '/phones/galaxy-s23.webp';
+    if (/^galaxy s24(?:\s|$)/.test(model)) return '/phones/galaxy-s24.jpg';
+    if (/^galaxy s25(?:\s|$)/.test(model)) return '/phones/galaxy-s25.jpg';
+  }
+
   return null;
 }
 
