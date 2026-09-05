@@ -1,0 +1,34 @@
+.grade-guide {
+  margin: 42px 0 76px;
+  padding: 32px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: white;
+  color: var(--ink);
+  box-shadow: 0 18px 46px rgb(23 35 38 / 7%);
+}
+
+.grade-guide-heading { max-width: 760px; margin-bottom: 28px; }
+.grade-guide h2 { margin: 8px 0 10px; font-size: 28px; letter-spacing: -.035em; }
+.grade-guide-heading p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+.grade-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; background: transparent; overflow: visible; }
+.grade-grid article { min-height: 230px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: white; }
+.grade-grid strong { display: grid; width: 44px; height: 44px; margin-bottom: 16px; place-items: center; border-radius: 50%; background: var(--heart); color: white; font-size: 20px; }
+.grade-grid span { display: block; margin-bottom: 9px; color: var(--ink); font-weight: 800; }
+.grade-grid p { margin-bottom: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.grade-trust-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin-top: 18px; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--line); }
+.grade-trust-row span { padding: 16px 14px; background: white; color: var(--ink); font-size: 12px; font-weight: 750; text-align: center; }
+.grade-trust-row span::before { content: '♥'; margin-right: 7px; color: var(--heart); }
+.grade-guide-note { margin-top: 18px; padding: 15px 18px; border-left: 4px solid var(--heart); border-radius: 10px; background: #fff7f8; color: var(--ink); font-size: 12px; line-height: 1.55; }
+.grade-guide-note b { font-weight: 850; }
+.grade-guide-note span { color: var(--muted); }
+
+@media (max-width: 820px) {
+  .grade-grid, .grade-trust-row { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 560px) {
+  .grade-guide { padding: 22px; }
+  .grade-grid, .grade-trust-row { grid-template-columns: 1fr; }
+  .grade-grid article { min-height: 0; }
+}
