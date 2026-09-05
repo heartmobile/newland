@@ -116,10 +116,15 @@ export default function PhonesPage() {
         </section>
 
         <section className="grade-guide" aria-labelledby="grade-guide-title">
-          <div>
-            <span className="eyebrow">Condition guide</span>
-            <h2 id="grade-guide-title">What grades A–D mean</h2>
+          <div className="grade-guide-heading">
+            <span className="eyebrow">Device condition guide</span>
+            <h2 id="grade-guide-title">Clear grades. Fully functional. Great value.</h2>
+            <p>
+              Our pre-owned devices are professionally tested and graded for cosmetic condition.
+              All grades are fully functional and ready to use.
+            </p>
           </div>
+
           <div className="grade-grid">
             {DEVICE_GRADE_GUIDE.map((grade) => (
               <article key={grade.grade}>
@@ -128,6 +133,18 @@ export default function PhonesPage() {
                 <p>{grade.description}</p>
               </article>
             ))}
+          </div>
+
+          <div className="grade-trust-row" aria-label="Device condition assurances">
+            <span>Professionally Tested</span>
+            <span>A–D Cosmetic Grading</span>
+            <span>Fully Functional</span>
+            <span>60-Day Limited Warranty</span>
+          </div>
+
+          <div className="grade-guide-note">
+            <b>A–D grades describe cosmetic condition — not functionality.</b>
+            <span> Every device is tested and fully operational.</span>
           </div>
         </section>
       </div>
