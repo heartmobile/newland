@@ -1,31 +1,24 @@
 export default function TermsPage() {
-  return (
-    <div className="page">
-      <div className="shell narrow">
-        <header className="page-heading">
-          <span className="eyebrow">Store information</span>
-          <h1>Terms and conditions</h1>
-          <p>Last updated August 2026</p>
-        </header>
-        <div className="policy">
-          <section>
-            <h2>Preview status</h2>
-            <p>This website is currently a storefront preview. Product availability and checkout are not yet active.</p>
-          </section>
-          <section>
-            <h2>Inventory and pricing</h2>
-            <p>Future orders are subject to live stock confirmation. Pricing errors or supplier changes may require correction or cancellation before fulfillment.</p>
-          </section>
-          <section>
-            <h2>Product condition</h2>
-            <p>Device grades describe cosmetic condition. Functional exceptions, carrier restrictions, and included accessories will be disclosed on each listing.</p>
-          </section>
-          <section>
-            <h2>Contact</h2>
-            <p>Questions may be sent to <a href="mailto:john@heartmobile.ca">john@heartmobile.ca</a>.</p>
-          </section>
-        </div>
-      </div>
+  return <div className="page"><div className="shell narrow">
+    <header className="page-heading"><span className="eyebrow">Store information</span><h1>Terms and Conditions</h1><p>Last updated September 5, 2026</p></header>
+    <div className="policy">
+      <section><p><strong>PLEASE READ THIS AGREEMENT CAREFULLY AS IT GOVERNS YOUR USE OF HEART MOBILE&apos;S WEBSITE. IT EXEMPTS HEART MOBILE AND OTHER PERSONS FROM LIABILITY OR LIMITS THEIR LIABILITY, AND CONTAINS OTHER IMPORTANT PROVISIONS THAT YOU SHOULD READ.</strong></p></section>
+      <section><h2>Your Acceptance of This Agreement</h2><p>This is an Agreement between you and all persons you represent and Heart Mobile (1001123964 Ontario Ltd.) regarding your access to and use of Heart Mobile&apos;s website and all content, information, products and services available on or through the Website. Each time you use the Website you signify your acceptance and agreement to be bound by this Agreement as it then reads and represent that you have legal authority to accept it for yourself and any person you purport to represent.</p><p>This Agreement is in addition to any other agreement you may have with Heart Mobile, including a transaction agreement.</p></section>
+      <section><h2>Permission to Use the Website</h2><p>You may use the Website only if you have reached the age of majority where you live and can form legally binding contracts under applicable law. You may not use the Website where access or use would be illegal or prohibited. You are responsible for complying with applicable laws. Heart Mobile reserves the right to request proof of identification and age. Heart Mobile ships internationally and domestically, subject to availability and applicable restrictions.</p></section>
+      <section><h2>Changes to This Agreement</h2><p>Heart Mobile may change this Agreement from time to time as it relates to future use of the Website by posting a revised Agreement. Use of the Website after a revised Agreement is posted signifies acceptance of the revised Agreement.</p></section>
+      <section><h2>Ownership and Permitted Use</h2><p>The Website, including its content, graphics, images, software, designs, applications, data, scripts, arrangement and presentation, is the property of Heart Mobile and/or applicable rights holders and is protected by Canadian and international copyright, trademark and other laws. Use of the Website does not transfer ownership rights. Except as permitted by law or with prior written consent, Website content may not be copied, reproduced, republished, transmitted, modified, mirrored, scraped, data-mined, sold or resold.</p></section>
+      <section><h2>Misprints, Errors, Product Availability and Prices</h2><p>Heart Mobile endeavours to provide current and accurate information, but errors, inaccuracies, omissions or incorrect specifications may occur. Heart Mobile cannot guarantee that products or services displayed will remain available. To the extent permitted by law, Heart Mobile may correct errors, change products, services, prices, fees, specifications or promotions, reject or cancel orders, and limit quantities. Unless otherwise stated, amounts displayed are in Canadian dollars.</p></section>
+      <section><h2>Trademark Information</h2><p>Heart Mobile names, logos, marks and other branding appearing on the Website are owned by, licensed to, or otherwise used with authorization by Heart Mobile or their respective owners. Nothing on the Website grants a licence or right to use those marks except as expressly permitted.</p></section>
+      <section><h2>Login Names and Passwords</h2><p>Certain Website features may require login credentials. Users are responsible for maintaining the security and confidentiality of their credentials and for authorized activity through their accounts. Heart Mobile may suspend or cancel credentials where reasonably necessary for security, fraud prevention, enforcement of this Agreement, or Website operation.</p></section>
+      <section><h2>Software, Contests and Submissions</h2><p>Software or digital resources made available through the Website may be subject to additional licence terms. Contests or promotions may be subject to separate rules. Unsolicited ideas, suggestions or feedback submitted to Heart Mobile are not treated as confidential unless expressly agreed in writing, and may be used for legitimate business purposes to the extent permitted by law.</p></section>
+      <section><h2>Your Information</h2><p>Information you provide through the Website must be true, accurate, current and complete. Heart Mobile may rely on that information to process transactions, communicate with you, prevent fraud, deliver products and provide services. Personal information is handled in accordance with the Heart Mobile Privacy Policy and applicable law.</p></section>
+      <section><h2>Disclaimers and Liability</h2><p><strong>TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, YOUR ACCESS TO AND USE OF THE WEBSITE IS AT YOUR OWN RISK. THE WEBSITE IS PROVIDED ON AN “AS IS” AND “AS AVAILABLE” BASIS WITHOUT REPRESENTATIONS, WARRANTIES OR CONDITIONS EXCEPT THOSE THAT CANNOT LAWFULLY BE EXCLUDED.</strong></p><p>To the fullest extent permitted by applicable law, Heart Mobile and its service providers will not be liable for indirect, incidental, consequential, special, punitive or exemplary loss or damage arising from or relating to the Website or this Agreement. Nothing in this Agreement excludes, restricts or modifies statutory consumer rights, warranties, conditions or remedies that cannot lawfully be excluded or restricted.</p></section>
+      <section><h2>Personal Information Privacy</h2><p>Heart Mobile collects, uses, retains and discloses personal information in accordance with its Privacy Policy and applicable privacy laws.</p></section>
+      <section><h2>Other Businesses, Sites and Resources</h2><p>Third parties may provide services, products, payment processing, shipping, communications or other functionality associated with the Website. Third-party sites and services are independent from Heart Mobile and may be governed by their own terms and privacy policies.</p></section>
+      <section><h2>Termination</h2><p>Heart Mobile may change, discontinue, modify, restrict or suspend all or part of the Website where reasonably necessary for business, operational, legal or security purposes and may suspend or terminate access where permitted by applicable law.</p></section>
+      <section><h2>Governing Law and Dispute Resolution</h2><p>Subject to mandatory laws applicable based on your place of residence, this Agreement and use of the Website are governed by the laws of Ontario and applicable federal laws of Canada. Where legally permitted, disputes will be submitted to courts of competent jurisdiction in Ontario. Mandatory consumer rights and jurisdictional protections remain unaffected.</p></section>
+      <section><h2>Other Matters</h2><p>If a provision of this Agreement is invalid or unenforceable, it will be severed or limited to the minimum extent necessary and the remaining provisions continue in force. A failure to enforce a provision does not constitute a waiver. Any rights not expressly granted are reserved to Heart Mobile and applicable rights holders.</p><p>The parties have expressly requested that this Agreement and related documents be drawn up in English. Les parties conviennent et exigent expressément que le présent contrat et tous les documents qui s&apos;y rapportent soient rédigés en anglais.</p></section>
+      <section><h2>Contact</h2><p><strong>Heart Mobile — 1001123964 Ontario Ltd.</strong><br />28 Broadway Ave, Unit 203<br />Toronto, Ontario M4P 1T5<br />Canada<br /><a href="tel:+14374348683">437-434-8683</a><br /><a href="mailto:john@heartmobile.ca">john@heartmobile.ca</a></p></section>
     </div>
-  );
+  </div></div>;
 }
