@@ -1,8 +1,19 @@
 import Link from 'next/link';
 
+type ModelGroup = {
+  name: string;
+  models: string[];
+};
+
+type BrandFamily = {
+  name: string;
+  models?: string[];
+  groups?: ModelGroup[];
+};
+
 type BrandMenu = {
   brand: string;
-  families: { name: string; models: string[] }[];
+  families: BrandFamily[];
 };
 
 const BRAND_MENUS: BrandMenu[] = [
@@ -19,12 +30,25 @@ const BRAND_MENUS: BrandMenu[] = [
   {
     brand: 'Samsung',
     families: [
-      { name: 'Galaxy S25', models: ['Galaxy S25', 'Galaxy S25 Edge', 'Galaxy S25+', 'Galaxy S25 Ultra'] },
-      { name: 'Galaxy S24', models: ['Galaxy S24', 'Galaxy S24+', 'Galaxy S24 Ultra', 'Galaxy S24 FE'] },
-      { name: 'Galaxy S23', models: ['Galaxy S23', 'Galaxy S23+', 'Galaxy S23 Ultra'] },
-      { name: 'Galaxy S22', models: ['Galaxy S22', 'Galaxy S22+', 'Galaxy S22 Ultra'] },
-      { name: 'Galaxy S21', models: ['Galaxy S21', 'Galaxy S21+', 'Galaxy S21 Ultra', 'Galaxy S21 FE'] },
-      { name: 'Galaxy A', models: ['Galaxy A56', 'Galaxy A36', 'Galaxy A26', 'Galaxy A16'] },
+      {
+        name: 'Galaxy S',
+        groups: [
+          { name: 'S25', models: ['Galaxy S25', 'Galaxy S25+', 'Galaxy S25 Ultra', 'Galaxy S25 Edge'] },
+          { name: 'S24', models: ['Galaxy S24', 'Galaxy S24+', 'Galaxy S24 Ultra', 'Galaxy S24 FE'] },
+          { name: 'S23', models: ['Galaxy S23', 'Galaxy S23+', 'Galaxy S23 Ultra', 'Galaxy S23 FE'] },
+          { name: 'S22', models: ['Galaxy S22', 'Galaxy S22+', 'Galaxy S22 Ultra'] },
+          { name: 'S21', models: ['Galaxy S21', 'Galaxy S21+', 'Galaxy S21 Ultra', 'Galaxy S21 FE'] },
+          { name: 'S20', models: ['Galaxy S20', 'Galaxy S20+', 'Galaxy S20 Ultra', 'Galaxy S20 FE'] },
+        ],
+      },
+      {
+        name: 'Galaxy A',
+        models: ['Galaxy A56', 'Galaxy A36', 'Galaxy A26', 'Galaxy A16'],
+      },
+      {
+        name: 'Galaxy Z',
+        models: ['Galaxy Z Fold', 'Galaxy Z Flip'],
+      },
     ],
   },
   {
@@ -43,6 +67,18 @@ function partsHref(brand: string, model: string) {
   return `/parts?brand=${encodeURIComponent(brand)}&model=${encodeURIComponent(model)}`;
 }
 
+function ModelLinks({ brand, models }: { brand: string; models: string[] }) {
+  return (
+    <ul>
+      {models.map((model) => (
+        <li key={model}>
+          <Link href={partsHref(brand, model)}>{model}</Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function BrandNavigation() {
   return (
     <>
@@ -52,18 +88,26 @@ export function BrandNavigation() {
           <div className="brand-menu-panel">
             <span className="brand-menu-title">{brand} replacement screens</span>
             <div className="brand-menu-families">
-              {families.map((family) => (
-                <section key={family.name}>
-                  <h2>{family.name}</h2>
-                  <ul>
-                    {family.models.map((model) => (
-                      <li key={model}>
-                        <Link href={partsHref(brand, model)}>{model}</Link>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              ))}
+              {families.map((family) =>
+                family.groups ? (
+                  <section key={family.name} style={{ gridColumn: '1 / -1' }}>
+                    <h2>{family.name}</h2>
+                    <div className="brand-menu-families">
+                      {family.groups.map((group) => (
+                        <section key={group.name}>
+                          <h2>{group.name}</h2>
+                          <ModelLinks brand={brand} models={group.models} />
+                        </section>
+                      ))}
+                    </div>
+                  </section>
+                ) : (
+                  <section key={family.name}>
+                    <h2>{family.name}</h2>
+                    <ModelLinks brand={brand} models={family.models ?? []} />
+                  </section>
+                ),
+              )}
             </div>
           </div>
         </details>
