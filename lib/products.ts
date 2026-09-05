@@ -87,10 +87,30 @@ export const DEVICE_FAMILIES: DeviceFamily[] = [
 ];
 
 export const DEVICE_GRADE_GUIDE = [
-  { grade: 'A', label: 'Excellent', description: 'Minimal signs of use; closest to new cosmetically.' },
-  { grade: 'B', label: 'Very good', description: 'Light wear that is difficult to notice at a glance.' },
-  { grade: 'C', label: 'Good', description: 'Visible cosmetic wear; fully tested for everyday use.' },
-  { grade: 'D', label: 'Fair', description: 'Heavier cosmetic wear for the lowest-cost option.' },
+  {
+    grade: 'A',
+    label: 'Open Box Quality',
+    description:
+      'Zero visible defects. Exceptional cosmetic condition with little to no evidence of previous use.',
+  },
+  {
+    grade: 'B',
+    label: 'Near-Mint Quality',
+    description:
+      'Any cosmetic imperfections are almost undetectable. At most, there may be a very light surface mark or hairline scratch visible on close inspection.',
+  },
+  {
+    grade: 'C',
+    label: 'Very Good Quality',
+    description:
+      'Fully operational and still in very good cosmetic condition. Minor signs of normal previous use may be present without affecting everyday use or functionality.',
+  },
+  {
+    grade: 'D',
+    label: 'Good / Value Quality',
+    description:
+      'Fully functional, with light visible signs of wear on the screen and/or housing. A dependable value option backed by a 60-day limited warranty.',
+  },
 ] as const;
 
 export const PRODUCTS: Product[] = [
