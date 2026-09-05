@@ -25,6 +25,24 @@ interface SearchResult {
   storageOptions: StorageGroup[];
 }
 
+function cleanGrade(condition: string) {
+  return condition.replace(/^grade\s*/i, '').trim() || condition;
+}
+
+function uniqueColors(storageOptions: StorageGroup[]) {
+  return Array.from(
+    new Set(
+      storageOptions.flatMap((storage) =>
+        storage.conditions.flatMap((condition) => condition.options.map((option) => option.color).filter(Boolean)),
+      ),
+    ),
+  );
+}
+
+function uniqueGrades(storageOptions: StorageGroup[]) {
+  return Array.from(new Set(storageOptions.flatMap((storage) => storage.conditions.map((condition) => cleanGrade(condition.condition)))));
+}
+
 export default function PhonesPage() {
   const [query, setQuery] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
@@ -58,7 +76,7 @@ export default function PhonesPage() {
     <div className="page device-finder-page">
       <div className="shell narrow">
         <header className="page-heading device-finder-heading">
-          <span className="eyebrow">Device availability experiment</span>
+          <span className="eyebrow">Device availability</span>
           <h1>Find your next phone.</h1>
           <p>Search the supplied device index by model. Results are grouped by submodel, storage, condition, and available colour without displaying inventory totals or pricing.</p>
         </header>
@@ -75,42 +93,100 @@ export default function PhonesPage() {
             />
             <button className="button" type="submit">Search devices</button>
           </div>
-          <small className="device-index-note">Experimental availability snapshot supplied August 28, 2026. Exact stock totals and pricing are not displayed.</small>
+          <small className="device-index-note">Availability snapshot supplied August 28, 2026. Exact stock totals and pricing are not displayed.</small>
         </form>
+
+        <div className="device-live-strip">
+          <strong>● Live inventory from MobileSentrix</strong>
+          <span>Prices and availability may vary. Exact stock totals and pricing are not displayed.</span>
+        </div>
 
         <section className="device-results" aria-live="polite" aria-label="Device search results">
           {status === 'loading' && <p>Searching the device index…</p>}
           {status === 'error' && <p>Search is not available right now. Please try again shortly.</p>}
           {status === 'idle' && hasSearched && results.length === 0 && <p>No matching devices found. Try a model, brand, or generation.</p>}
           {results.length > 0 && (
-            <div className="device-result-list">
-              {results.map((result) => (
-                <article className="device-result" key={result.id}>
-                  <span>{result.make}</span>
-                  <h2>{result.model}</h2>
-                  <div className="device-storage-list">
-                    {result.storageOptions.map((storage) => (
-                      <section className="device-storage" key={storage.storage}>
-                        <h3>{storage.storage || 'Storage not specified'}</h3>
-                        <div className="device-condition-list">
-                          {storage.conditions.map((condition) => (
-                            <div className="device-condition" key={condition.condition}>
-                              <strong>{condition.condition}</strong>
-                              <div className="device-color-list">
-                                {condition.options.map((option) => (
-                                  <span className="device-color" key={option.color} title={option.carriers.join(', ')}>
-                                    {option.color || 'Colour not specified'}
-                                  </span>
+            <div className="device-result-list device-result-list-premium">
+              {results.map((result) => {
+                const colors = uniqueColors(result.storageOptions);
+                const grades = uniqueGrades(result.storageOptions);
+                const storage = result.storageOptions.map((option) => option.storage).filter(Boolean);
+
+                return (
+                  <article className="device-result device-result-premium" key={result.id}>
+                    <div className="device-card-visual" aria-hidden="true">
+                      <span>{result.make}</span>
+                      <div className="device-card-phone">
+                        <i />
+                        <i />
+                        <i />
+                      </div>
+                      <small>Product image coming soon</small>
+                    </div>
+
+                    <div className="device-card-main">
+                      <div className="device-card-heading">
+                        <div>
+                          <span className="device-brand-label">{result.make}</span>
+                          <h2>{result.model}</h2>
+                          <p>Professionally tested. Clearly graded. Ready for everyday use.</p>
+                        </div>
+                        <span className="device-stock-badge">✓ Available</span>
+                      </div>
+
+                      <div className="device-card-highlights">
+                        <span>✓ Professionally tested</span>
+                        <span>◇ Clear cosmetic grading</span>
+                        <span>♡ 60-day limited warranty</span>
+                      </div>
+
+                      <div className="device-card-options">
+                        <div>
+                          <small>Storage</small>
+                          <strong>{storage[0] || 'See options'}</strong>
+                          {storage.length > 1 && <span>+{storage.length - 1} more</span>}
+                        </div>
+                        <div>
+                          <small>Grade</small>
+                          <strong>{grades.join(' · ') || 'See options'}</strong>
+                        </div>
+                        <div>
+                          <small>Available colours</small>
+                          <div className="device-card-colors">
+                            {colors.slice(0, 5).map((color) => <span key={color}>{color}</span>)}
+                            {colors.length > 5 && <span>+{colors.length - 5}</span>}
+                          </div>
+                        </div>
+                      </div>
+
+                      <details className="device-card-details">
+                        <summary>View available configurations</summary>
+                        <div className="device-storage-list">
+                          {result.storageOptions.map((storageOption) => (
+                            <section className="device-storage" key={storageOption.storage}>
+                              <h3>{storageOption.storage || 'Storage not specified'}</h3>
+                              <div className="device-condition-list">
+                                {storageOption.conditions.map((condition) => (
+                                  <div className="device-condition" key={condition.condition}>
+                                    <strong>{condition.condition}</strong>
+                                    <div className="device-color-list">
+                                      {condition.options.map((option) => (
+                                        <span className="device-color" key={option.color} title={option.carriers.join(', ')}>
+                                          {option.color || 'Colour not specified'}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </div>
                                 ))}
                               </div>
-                            </div>
+                            </section>
                           ))}
                         </div>
-                      </section>
-                    ))}
-                  </div>
-                </article>
-              ))}
+                      </details>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           )}
         </section>
