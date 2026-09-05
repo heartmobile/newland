@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img" aria-labelledby="title desc">
+  <title id="title">iPhone 13 representative artwork</title>
+  <desc id="desc">Clean front and back representative illustration of an iPhone 13 family device on a white background.</desc>
+  <defs>
+    <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#46d6d0"/>
+      <stop offset="0.33" stop-color="#0b58c7"/>
+      <stop offset="0.7" stop-color="#19145d"/>
+      <stop offset="1" stop-color="#ff6ea8"/>
+    </linearGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#26384b"/>
+      <stop offset="1" stop-color="#101a26"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="24" stdDeviation="24" flood-color="#000" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="1200" fill="#fff"/>
+  <ellipse cx="600" cy="1008" rx="430" ry="42" fill="#000" opacity="0.08"/>
+  <g filter="url(#shadow)">
+    <g transform="translate(145 150)">
+      <rect x="0" y="0" width="390" height="810" rx="62" fill="#0a0d12"/>
+      <rect x="14" y="14" width="362" height="782" rx="49" fill="url(#screen)"/>
+      <path d="M14 456C110 340 198 347 376 146V14H14z" fill="#32d7c4" opacity="0.68"/>
+      <path d="M14 456C164 360 230 394 376 710V796H14z" fill="#3142d4" opacity="0.68"/>
+      <path d="M14 456C176 478 224 600 376 702V796H240z" fill="#ff6da7" opacity="0.76"/>
+      <rect x="116" y="14" width="158" height="42" rx="20" fill="#05070a"/>
+      <circle cx="195" cy="35" r="6" fill="#202833"/>
+      <rect x="-5" y="150" width="6" height="60" rx="3" fill="#2a3039"/>
+      <rect x="-5" y="236" width="6" height="102" rx="3" fill="#2a3039"/>
+      <rect x="389" y="208" width="6" height="126" rx="3" fill="#2a3039"/>
+      <path d="M42 40h306c16 0 30 14 30 30v690c0 17-14 30-30 30H42c-16 0-30-13-30-30V70c0-16 14-30 30-30z" fill="url(#glass)" opacity="0.22"/>
+    </g>
+    <g transform="translate(665 150)">
+      <rect x="0" y="0" width="390" height="810" rx="62" fill="url(#body)"/>
+      <rect x="14" y="14" width="362" height="782" rx="49" fill="#1c2a39"/>
+      <path d="M14 14h362v782H250C184 588 112 384 14 156z" fill="url(#glass)" opacity="0.32"/>
+      <rect x="32" y="34" width="166" height="166" rx="42" fill="#314356"/>
+      <circle cx="82" cy="82" r="39" fill="#0a1018" stroke="#47596b" stroke-width="8"/>
+      <circle cx="148" cy="148" r="39" fill="#0a1018" stroke="#47596b" stroke-width="8"/>
+      <circle cx="146" cy="76" r="15" fill="#f5e3c5"/>
+      <circle cx="78" cy="147" r="10" fill="#172433"/>
+      <circle cx="82" cy="82" r="13" fill="#1b4f92" opacity="0.85"/>
+      <circle cx="148" cy="148" r="13" fill="#1b4f92" opacity="0.85"/>
+      <rect x="389" y="208" width="6" height="126" rx="3" fill="#2a3039"/>
+    </g>
+  </g>
+</svg>
