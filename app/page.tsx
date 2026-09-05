@@ -16,6 +16,66 @@ export default function HomePage() {
               Shop refurbished Apple and Samsung devices or find a quality replacement screen
               with clear grading, warranty information, and Canadian support.
             </p>
+
+            {/* Smart Search UI Layer */}
+            <div className="w-full max-w-md mt-6 mb-6" style={{ position: 'relative', zIndex: 50 }}>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="text"
+                  placeholder="🔍 Search thousands of devices..."
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px 12px 40px',
+                    borderRadius: '12px',
+                    border: '1px solid #d1d5db',
+                    fontSize: '15px',
+                    color: '#111827',
+                    backgroundColor: '#ffffff',
+                    outline: 'none',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                  }}
+                  onChange={async (e) => {
+                    const val = e.target.value;
+                    const tray = document.getElementById('search-dropdown-tray');
+                    if (!tray) return;
+                    if (val.trim().length < 2) { tray.style.display = 'none'; return; }
+                    try {
+                      const res = await fetch(`/api/search?device=${encodeURIComponent(val)}`);
+                      const data = await res.json();
+                      let html = '';
+                      if (data && data.length > 0) {
+                        data.forEach((device: any) => {
+                          const wikiImg = `https://wikipedia.org{encodeURIComponent(device.modelName || device.name)}.png`;
+                          html += `
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f3f4f6; cursor: pointer;">
+                              <div style="display: flex; align-items: center; gap: 10px;">
+                                <img src="${device.imageUrl || wikiImg}" style="width: 32px; height: 32px; object-fit: contain;" onerror="this.src='https://heartmobile.ca'" />
+                                <div>
+                                  <div style="font-weight: 700; font-size: 13px; color: #111827;">${device.modelName || device.name}</div>
+                                  <div style="font-size: 10px; color: #6b7280;">${device.brand} • API Sync</div>
+                                </div>
+                              </div>
+                              <div style="font-weight: 800; font-size: 13px; color: #dc2626;">CA$${device.retailPrice || '---'}</div>
+                            </div>
+                          `;
+                        });
+                        tray.innerHTML = html; tray.style.display = 'block';
+                      }
+                    } catch (err) { console.log("Awaiting core API verification sync..."); }
+                  }}
+                  onBlur={() => setTimeout(() => {
+                    const tray = document.getElementById('search-dropdown-tray');
+                    if (tray) tray.style.display = 'none';
+                  }, 200)}
+                />
+              </div>
+              <div id="search-dropdown-tray" style={{
+                position: 'absolute', left: 0, right: 0, zIndex: 100, backgroundColor: '#ffffff',
+                marginTop: '4px', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                border: '1px solid #e5e7eb', maxHeight: '240px', overflowY: 'auto', display: 'none'
+              }}></div>
+            </div>
+
             <div className="actions">
               <Link href="/phones" className="button">Shop devices</Link>
               <Link href="/parts" className="button button-secondary">Browse screens</Link>
@@ -129,60 +189,3 @@ export default function HomePage() {
                     <em>Compatible with {product.compatibility}</em>
                   </span>
                   <b>CA${getDisplayPrice(product).toFixed(2)}</b>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="shopping-guide">
-        <div className="shell">
-          <div className="section-heading guide-heading">
-            <span className="eyebrow">Shop with clarity</span>
-            <h2>Know what you&apos;re getting.</h2>
-            <p>
-              Straightforward product details and support help you choose confidently from
-              catalog to delivery.
-            </p>
-          </div>
-          <div className="guide-grid">
-            <article>
-              <span className="guide-number">01</span>
-              <h3>Compare the details</h3>
-              <p>Review condition, storage, compatibility, quality tier, and estimated pricing.</p>
-            </article>
-            <article>
-              <span className="guide-number">02</span>
-              <h3>Confirm live availability</h3>
-              <p>Inventory will be rechecked with the supplier before an order is accepted.</p>
-            </article>
-            <article>
-              <span className="guide-number">03</span>
-              <h3>Get covered delivery</h3>
-              <p>See warranty terms up front and receive tracking when your order ships.</p>
-            </article>
-          </div>
-          <div className="guide-links">
-            <Link href="/warranty">Read warranty details →</Link>
-            <Link href="/delivery">See delivery information →</Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="repair-banner">
-        <div className="shell repair-content">
-          <div>
-            <span className="eyebrow">Need installation?</span>
-            <h2>Connect with a local repair professional.</h2>
-            <p>
-              Our repair-partner directory is coming soon, with participating screen
-              installations from $40.
-            </p>
-          </div>
-          <Link href="/parts" className="button button-dark">Choose your screen</Link>
-        </div>
-      </section>
-    </>
-  );
-}
